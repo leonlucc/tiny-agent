@@ -43,12 +43,10 @@ pip install -r requirements.txt
 
 # 3. 配置大模型密钥
 cp .env.example .env
-# 打开.env文件，填写对应LLM厂商API_KEY（支持DeepSeek等）
+# 打开 .env 文件，填写大模型提供商LLM_API_KEY等参数
 
-# 4. 启动一体化服务
+# 4. 启动服务
 python -m app.main
-
-# 访问默认地址 http://127.0.0.1:8000
 ```
 
 👉 请移步查阅：🔗 [完整快速开始指南](doc/quick-start.md)
@@ -59,26 +57,28 @@ python -m app.main
 
 Tiny Agent 采用渐进式演进方式，每个版本引入一个新的核心能力。你可以通过Git Tag随时切换，跟随项目由浅入深地手写出完整的 Agent 体系。
 
-| 版本            | 主题                     | 核心能力                             | UI 变化              |
-| :------------ | :--------------------- | :------------------------------- | :----------------- |
-| **v0.0.1**    | Hello LLM              | LLM SDK 配置与单轮问答                  | 无 UI，仅 CLI 交互      |
-| **v0.1.0**    | Chat                   | Chat History、消息协议与流式对话           | 单页 Chat 界面         |
-| **v0.2.0**    | Prompt Engineering     | System Prompt、结构化输出与 JSON Schema | 增加模型参数配置面板         |
-| **v0.3.0**    | Basic RAG              | 文档切分、Embedding 与本地向量检索           | 增加知识库管理界面          |
-| **v0.4.0**    | Tool Calling           | 工具声明、参数生成、执行与结果回填                | 展示 Tool 调用链路       |
-| **v0.5.0**    | MCP                    | MCP Client、工具发现与统一接入             | 增加 MCP Server 管理界面 |
-| **v0.6.0**    | Workflow               | 任务拆解、节点编排与状态流转                   | 展示工作流节点与运行状态       |
-| **v0.7.0**    | Agent Loop             | ReAct 循环、自主决策与终止控制               | 可视化 Agent 执行轨迹     |
-| **v0.8.0**    | Evaluation & Tracing   | 任务评估、链路追踪与回归对比                   | 增加 Trace 与指标面板     |
-| **v0.9.0**    | Agent Runtime          | 状态持久化、超时、取消、重试与恢复                | 增加任务运行控制           |
-| 🎯 **v1.0.0** | **Tiny Agent MVP**     | **整合 RAG、工具、工作流与 Agent Runtime** | **完整 Agent 控制面板**  |
-| **v1.1.0**    | Skills                 | 技能包注册、发现、加载与自动路由                 | 增加 Skills 管理界面     |
-| **v1.2.0**    | Short-Term Memory      | Token 预算、窗口裁剪与会话摘要               | 增加 Token 状态与熔断提示   |
-| **v1.3.0**    | Long-Term Memory       | 跨会话记忆提取、存储与检索                    | 增加 Memory 管理界面     |
-| **v1.4.0**    | Advanced RAG           | 混合检索、Rerank 与检索优化                | 升级知识库配置面板          |
-| **v1.5.0**    | Security & Permissions | 工具权限、参数校验、确认与审计                  | 增加安全审计界面           |
-| **v1.6.0**    | Multi-Agent            | 多角色 Agent、任务分发与协作监督              | 增加多 Agent 管理面板     |
-
+| 版本 | 主题 | 核心能力 | UI 变化 |
+|:---|:---|:---|:---|
+| **v0.0.1** | Hello LLM | LLM SDK 配置与单轮问答 | 无 UI，仅 CLI 交互 |
+| **v0.0.2** | Streaming Web | SSE 流式输出 | 极简 Web 页面 |
+| **v0.1.0** | Chat | 多轮对话、消息历史 | 消息列表与连续追问 |
+| **v0.2.0** | Prompt Engineering | System Prompt、结构化输出与 JSON Schema | 增加模型参数配置面板 |
+| **v0.3.0** | Basic RAG | 文档切分、Embedding 与本地向量检索 | 增加知识库管理界面 |
+| **v0.4.0** | Tool Calling | 工具声明、参数生成、执行与结果回填 | 展示 Tool 调用链路 |
+| **v0.5.0** | MCP | MCP Client、工具发现与统一接入 | 增加 MCP Server 管理界面 |
+| **v0.6.0** | Workflow | 任务拆解、节点编排与状态流转 | 展示工作流节点与运行状态 |
+| **v0.7.0** | Agent Loop | ReAct 循环、自主决策与终止控制 | 可视化 Agent 执行轨迹 |
+| **v0.8.0** | Evaluation & Tracing | 任务评估、链路追踪与回归对比 | 增加 Trace 与指标面板 |
+| **v0.9.0** | Agent Runtime | 状态持久化、超时、取消、重试与恢复 | 增加任务运行控制 |
+| 🎯 **v1.0.0** | **Tiny Agent Core** | **整合 LLM、RAG、工具、MCP、工作流与 Agent Loop** | **完整 Agent 控制面板** |
+| **v1.1.0** | Skills | 技能包注册、发现、加载与自动路由 | 增加 Skills 管理界面 |
+| **v1.2.0** | Context Management | Token 预算、窗口裁剪与会话摘要 | 增加 Token 状态与熔断提示 |
+| **v1.3.0** | Long-Term Memory | 跨会话记忆提取、存储与检索 | 增加 Memory 管理界面 |
+| **v1.4.0** | Advanced RAG | 混合检索、Rerank 与检索优化 | 升级知识库配置面板 |
+| **v1.5.0** | Security & Permissions | 工具权限、参数校验、确认与审计 | 增加安全审计界面 |
+| **v1.6.0** | Voice Interaction | ASR/TTS、语音打断 | 语音录制与波形 |
+| **v1.7.0** | Multimodal Vision | 视觉理解、图像生成 | 图片上传与生成 |
+| **v2.0.0** | Multi-Agent | 多 Agent 协作、任务分发与监督 | 多 Agent 管理面板 |
 
 👉 请移步查阅：🔗 [完整 Roadmap 详解](doc/roadmap.md)
 
