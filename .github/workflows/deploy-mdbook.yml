@@ -1,0 +1,36 @@
+
+name: Deploy mdBook to GitHub Pages
+
+on:
+  push:
+    tags:
+      - 'v*'                # 匹配版本标签
+  workflow_dispatch:       # 保留手动触发，便于调试
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write      # 允许推送 gh-pages 分支
+      pages: write         # 可选，若使用官方 pages 部署可开启
+      id-token: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup mdBook
+        uses: peaceiris/actions-mdbook@v2
+        with:
+          mdbook-version: 'latest'
+
+      - name: Build mdBook
+        run: mdbook build book/   # 假设 book.toml 位于 book/ 目录
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./book/book   # mdBook 默认输出目录
+          publish_branch: gh-pages   # GitHub Pages 目标分支
+          force_orphan: true         # 保持提交历史干净
