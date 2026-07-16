@@ -1,7 +1,7 @@
 # Summary
 
-[前言](preface.md)
-[导读](introduction.md)
+- [前言](preface.md)
+- [导读](introduction.md)
 
 # 第一部分：模型基础与全栈通信（基础篇）
 
