@@ -80,7 +80,7 @@ Tiny Agent 采用渐进式演进方式，每个版本引入一个新的核心能
 | **v1.7.0** | Multimodal Vision | 视觉理解、图像生成 | 图片上传与生成 |
 | **v2.0.0** | Multi-Agent | 多 Agent 协作、任务分发与监督 | 多 Agent 管理面板 |
 
-👉 请移步查阅：🔗 [完整 Roadmap 详解](doc/roadmap.md)
+👉 请移步查阅：🔗 [完整 Roadmap 详解](book/src/roadmap.md)
 
 ---
 
