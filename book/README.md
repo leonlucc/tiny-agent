@@ -32,3 +32,6 @@ mdbook build
    ```
 2. **执行导出**：
    运行 `mdbook build` 后，可在 `book/pdf/` 和 `book/epub/` 目录下找到对应的电子书文件。
+
+## 声明
+本教程采用 CC BY-NC-ND 4.0 许可，请勿用于商业用途或制作衍生版本。
