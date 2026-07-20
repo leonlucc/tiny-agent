@@ -45,9 +45,11 @@ pip install -r requirements.txt
 cp .env.example .env
 # 打开 .env 文件，填写大模型提供商LLM_API_KEY等参数
 
-# 4. 启动服务
+# 4. 启动 Web 服务
 python -m app.main
 ```
+
+启动后打开 `http://127.0.0.1:8000`，即可在浏览器中输入消息并查看 SSE 流式输出。
 
 👉 请移步查阅：🔗 [完整快速开始指南](doc/quick-start.md)
 

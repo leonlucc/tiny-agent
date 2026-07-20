@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智能助手</title>
+    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- 侧边栏 - Logo 区 -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-title-row">
+                <h1><i class="fas fa-star"></i> <span>智能助手</span></h1>
+                <button class="sidebar-toggle" id="sidebar-toggle" title="切换侧边栏" aria-label="切换侧边栏">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 主聊天区域 -->
+    <div class="main-content">
+        <div class="chat-header">
+            <div class="chat-title" id="current-chat-title">智能助手</div>
+        </div>
+
+        <div class="chat-container" id="chat-container">
+            <!-- 初始空状态 -->
+            <div class="empty-state" id="empty-state">
+                <i class="fas fa-star"></i>
+                <h2>欢迎使用智能助手</h2>
+                <p>请开始您的问题或输入需求。</p>
+            </div>
+
+            <!-- 消息将通过JS动态生成 -->
+        </div>
+
+        <template id="assistant-message-template">
+            <div class="message assistant-message">
+                <details class="thinking-section" hidden open>
+                    <summary>思考过程</summary>
+                    <div class="thinking-content"></div>
+                </details>
+                <div class="message-content"></div>
+            </div>
+        </template>
+
+        <div class="input-container">
+            <div class="message-input-wrapper">
+                <textarea
+                    class="message-input"
+                    id="message-input"
+                    placeholder="发消息..."
+                    rows="1"
+                ></textarea>
+                <button class="send-button" id="send-button" disabled aria-label="发送消息">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="status-bar">
+            <span class="status-hint">内容由 AI 生成，仅供参考</span>
+            <div class="connection-status" id="connection-status">
+                <div class="connection-dot"></div>
+                <span data-connection-label>已连接</span>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { init } from './js/app.js';
+        
+        // 初始化应用
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

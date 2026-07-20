@@ -1,6 +1,6 @@
 ## 安装和启动
 
-当前版本是 `v0.0.1 Hello LLM`，只提供 CLI 终端交互，不包含前端 UI 和 Web 服务。
+当前版本是 `v0.2 Streaming Web`，提供一个极简 Web 页面，通过 SSE 实时渲染大模型流式输出。
 
 ### 1. 创建虚拟环境
 
@@ -26,13 +26,19 @@ LLM_BASE_URL=https://api.deepseek.com
 LLM_MODEL=deepseek-v4-flash
 ```
 
-### 3. 启动 CLI
+### 3. 启动 Web 服务
 
 ```bash
 .venv/bin/python -m app.main
 ```
 
-启动后输入一条文本消息，程序会调用大模型并输出回复。输入 `exit` 退出。
+启动后打开浏览器访问：
+
+```bash
+http://127.0.0.1:8000
+```
+
+在页面输入一条文本消息，模型回复会逐段显示在结果区域。
 
 ---
 
