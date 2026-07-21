@@ -5,21 +5,17 @@ from __future__ import annotations
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
-
 from app.service.llm_service import stream_chat_completion
-
 
 router = APIRouter()
 
-
 class ChatRequest(BaseModel):
     """浏览器发送给流式接口的最小消息结构。"""
-
     message: str
 
 
 @router.get("/health")
-def health() -> dict[str, str]:
+async def health() -> dict[str, str]:
     """用于前端检测后端服务是否可用。"""
     return {"status": "ok"}
 

@@ -3,18 +3,14 @@
 from __future__ import annotations
 
 from pathlib import Path
-
 import uvicorn
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
-
 from app.api.endpoint import router
-
 
 BACKEND_DIR = Path(__file__).resolve().parents[1]
 PROJECT_ROOT = BACKEND_DIR.parent
 FRONTEND_DIR = PROJECT_ROOT / "frontend"
-
 
 def create_app() -> FastAPI:
     """创建 FastAPI 应用，注册接口路由并托管前端静态页面。"""
@@ -23,14 +19,10 @@ def create_app() -> FastAPI:
     app.mount("/", StaticFiles(directory=FRONTEND_DIR, html=True), name="frontend")
     return app
 
-
-app = create_app()
-
-
 def main() -> None:
     """启动本地 Web 服务。"""
-    uvicorn.run(app, host="127.0.0.1", port=8000)
-
+    app = create_app()
+    uvicorn.run(app, host="0.0.0.0", port=8000)
 
 if __name__ == "__main__":
     main()
