@@ -38,13 +38,6 @@ function appendMessage(element) {
     scrollToBottom();
 }
 
-/** 向元素追加图标和文本 */
-function appendIconText(element, iconClass, text) {
-    const icon = document.createElement('i');
-    icon.className = iconClass;
-    element.append(icon, document.createTextNode(text));
-}
-
 /** 创建 assistant 消息元素（历史、流式、错误消息统一入口） */
 function createAssistantMessageElement({ content = '', reasoning = '' } = {}) {
     const el = dom.assistantMessageTemplate.content.firstElementChild.cloneNode(true);
@@ -126,56 +119,9 @@ function createTypingIndicator() {
     return indicator;
 }
 
-/** 显示通知消息（错误、系统等通用逻辑） */
-function showNotice(className, iconClass, message, { fadeOut = false, autoHide = false } = {}) {
-    if (className === 'error-message') {
-        const existingError = document.querySelector('.error-message');
-        if (existingError) existingError.remove();
-    }
-
-    const notice = document.createElement('div');
-    notice.className = className;
-    appendIconText(notice, iconClass, message);
-    appendMessage(notice);
-
-    if (autoHide) {
-        setTimeout(() => {
-            if (fadeOut) {
-                notice.style.opacity = '0';
-                setTimeout(() => notice.remove(), 300);
-            } else {
-                notice.style.display = 'none';
-            }
-        }, fadeOut ? 3000 : 5000);
-    }
-}
-
-/** 显示错误提示横幅 */
-function showError(message) {
-    showNotice('error-message', 'fas fa-exclamation-circle', message, { autoHide: true });
-}
-
-/** 显示系统操作成功提示 */
-function showSystemMessage(message) {
-    showNotice('system-message', 'fas fa-check-circle', message, { autoHide: true, fadeOut: true });
-}
-
 /** 在聊天区显示 assistant 风格的错误消息 */
 function showAssistantError(message) {
     appendMessage(createAssistantMessageElement({ content: message }).el);
-}
-
-/** 更新消息下方的令牌用量计数 */
-function updateTokenCounter(messageElement, tokensUsed) {
-    const existingCounter = messageElement.querySelector('.token-counter');
-    if (existingCounter) existingCounter.remove();
-
-    if (tokensUsed > 0) {
-        const tokenCounter = document.createElement('div');
-        tokenCounter.className = 'token-counter';
-        appendIconText(tokenCounter, 'fas fa-microchip', `令牌使用: ${tokensUsed}`);
-        messageElement.appendChild(tokenCounter);
-    }
 }
 
 /** 渲染整个会话的聊天消息列表 */
@@ -205,12 +151,9 @@ export {
     initChatUI,
     renderChat,
     addMessage,
-    showError,
-    showSystemMessage,
     showAssistantError,
     createTypingIndicator,
     createStreamingAssistantMessage,
     updateStreamingAssistantMessage,
-    finalizeStreamingAssistantMessage,
-    updateTokenCounter
+    finalizeStreamingAssistantMessage
 };

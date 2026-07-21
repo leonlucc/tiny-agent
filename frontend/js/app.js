@@ -1,9 +1,5 @@
 /**
- * Tiny Agent v0.2 前端入口。
- * 保留原页面的 Logo 区与聊天区设计，仅接入最小 SSE 流式对话。
- */
-
-const APP_NAME = '极简智能体';
+ * Tiny Agent 前端入口 */
 
 import { readSSEStream } from './sse-stream.js';
 import {
@@ -25,19 +21,14 @@ const DOMElements = {
     chatContainer: null,
     messageInput: null,
     sendButton: null,
-    currentChatTitle: null,
     emptyState: null,
     connectionLabel: null,
     assistantMessageTemplate: null,
-    connectionDot: null,
-    sidebar: null,
-    sidebarTitle: null,
-    sidebarToggle: null
+    connectionDot: null
 };
 
 function init() {
     cacheDOMElements();
-    applyAppName();
     initChatUI({
         chatContainer: DOMElements.chatContainer,
         emptyState: DOMElements.emptyState,
@@ -54,25 +45,10 @@ function cacheDOMElements() {
     DOMElements.chatContainer = document.getElementById('chat-container');
     DOMElements.messageInput = document.getElementById('message-input');
     DOMElements.sendButton = document.getElementById('send-button');
-    DOMElements.currentChatTitle = document.getElementById('current-chat-title');
     DOMElements.emptyState = document.getElementById('empty-state');
     DOMElements.connectionLabel = document.querySelector('[data-connection-label]');
     DOMElements.assistantMessageTemplate = document.getElementById('assistant-message-template');
     DOMElements.connectionDot = document.querySelector('.connection-dot');
-    DOMElements.sidebar = document.querySelector('.sidebar');
-    DOMElements.sidebarTitle = document.querySelector('.sidebar-title-row h1 span');
-    DOMElements.sidebarToggle = document.getElementById('sidebar-toggle');
-}
-
-function applyAppName() {
-    document.title = APP_NAME;
-    DOMElements.sidebarTitle.textContent = APP_NAME;
-    DOMElements.currentChatTitle.textContent = APP_NAME;
-
-    const emptyStateTitle = DOMElements.emptyState.querySelector('h2');
-    if (emptyStateTitle) {
-        emptyStateTitle.textContent = `欢迎使用${APP_NAME}`;
-    }
 }
 
 async function checkConnection() {
@@ -182,11 +158,6 @@ async function sendMessage() {
 
 function setupEventListeners() {
     DOMElements.sendButton.addEventListener('click', sendMessage);
-
-    DOMElements.sidebarToggle.addEventListener('click', () => {
-        DOMElements.sidebar.classList.toggle('collapsed');
-        DOMElements.sidebarToggle.classList.toggle('active');
-    });
 
     DOMElements.messageInput.addEventListener('keydown', (event) => {
         if (event.key === 'Enter' && !event.shiftKey) {
