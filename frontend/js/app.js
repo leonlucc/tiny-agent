@@ -2,6 +2,7 @@
  * Tiny Agent 前端入口 */
 
 import { readSSEStream } from './sse-stream.js';
+import { apiClient } from './api.js';
 import {
     initChatUI,
     renderChat,
@@ -52,12 +53,8 @@ function cacheDOMElements() {
 }
 
 async function checkConnection() {
-    try {
-        const response = await fetch('/api/health', { cache: 'no-store' });
-        updateConnectionStatus(response.ok);
-    } catch {
-        updateConnectionStatus(false);
-    }
+    const isConnected = await apiClient.checkConnection();
+    updateConnectionStatus(isConnected);
 }
 
 function updateConnectionStatus(isConnected) {
@@ -88,22 +85,8 @@ async function sendMessage() {
     let streamRefs = null;
 
     try {
-        const response = await fetch('/api/chat/stream', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ message: content })
-        });
-
-        if (!response.ok) {
-            const data = await response.json().catch(() => ({}));
-            throw new Error(data.detail || response.statusText);
-        }
-        if (!response.body) {
-            throw new Error('响应不包含流数据');
-        }
-
         streamRefs = createStreamingAssistantMessage({ hidden: true });
-        const reader = response.body.getReader();
+        const reader = await apiClient.chatStream(content);
         let streamedContent = '';
         let streamedReasoning = '';
         let hasShownAssistantMessage = false;
