@@ -1,6 +1,5 @@
 /**
- * Read JSON payloads from the app's server-sent event stream.
- * The backend sends one JSON object per `data:` event and ends with `[DONE]`.
+ * SSE 工具：从响应流中读取 JSON 事件；服务端使用 [DONE] 结束流。
  */
 async function* readSSEStream(reader) {
     const decoder = new TextDecoder('utf-8');

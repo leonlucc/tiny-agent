@@ -1,5 +1,5 @@
 /**
- * API 封装模块 - Tiny Agent 后端接口封装
+ * API 服务：封装 Tiny Agent 后端接口。
  */
 
 const API_CONFIG = {

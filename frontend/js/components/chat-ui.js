@@ -1,18 +1,94 @@
 /**
- * 聊天 UI 模块 - 消息渲染与聊天区域管理
+ * 聊天区组件：只负责根据 app.js 的指令更新界面，不持有业务状态。
  */
 
 const dom = {
     chatContainer: null,
     emptyState: null,
-    assistantMessageTemplate: null
+    assistantMessageTemplate: null,
+    messageInput: null,
+    sendButton: null,
+    connectionStatus: null
 };
+
+let onSend = null;
+let composerBusy = false;
 
 /** 初始化聊天 UI 所需的 DOM 引用 */
 function initChatUI(refs) {
     dom.chatContainer = refs.chatContainer;
     dom.emptyState = refs.emptyState;
     dom.assistantMessageTemplate = refs.assistantMessageTemplate;
+    dom.messageInput = refs.messageInput;
+    dom.sendButton = refs.sendButton;
+    dom.connectionStatus = refs.connectionStatus;
+    onSend = refs.onSend;
+
+    bindComposerEvents();
+    resizeComposer();
+    syncComposerState();
+}
+
+/** 根据输入内容与忙碌状态同步发送按钮 */
+function syncComposerState() {
+    dom.sendButton.disabled = composerBusy || !dom.messageInput.value.trim();
+}
+
+/** 根据内容自动调整输入框高度 */
+function resizeComposer() {
+    dom.messageInput.style.height = 'auto';
+    dom.messageInput.style.height = `${dom.messageInput.scrollHeight}px`;
+}
+
+/** 将当前输入内容提交给应用调度中心 */
+function submitComposer() {
+    const content = dom.messageInput.value.trim();
+    if (!content || composerBusy) return;
+    onSend(content);
+}
+
+/** 绑定输入区的局部交互 */
+function bindComposerEvents() {
+    dom.sendButton.addEventListener('click', submitComposer);
+
+    dom.messageInput.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter' && !event.shiftKey) {
+            event.preventDefault();
+            submitComposer();
+        }
+    });
+
+    dom.messageInput.addEventListener('input', () => {
+        resizeComposer();
+        syncComposerState();
+    });
+}
+
+/** 清空输入框并恢复初始高度 */
+function clearComposer() {
+    dom.messageInput.value = '';
+    resizeComposer();
+    syncComposerState();
+}
+
+/** 设置输入区忙碌状态 */
+function setComposerBusy(isBusy) {
+    composerBusy = isBusy;
+    syncComposerState();
+}
+
+/** 聚焦输入框 */
+function focusComposer() {
+    dom.messageInput.focus();
+}
+
+/** 更新后端连接状态的图标与文案 */
+function setConnectionStatus(isConnected) {
+    const connectionDot = dom.connectionStatus.querySelector('.connection-dot');
+    const connectionLabel = dom.connectionStatus.querySelector('[data-connection-label]');
+
+    connectionDot.classList.toggle('disconnected', !isConnected);
+    connectionLabel.textContent = isConnected ? '已连接' : '连接断开';
 }
 
 let scrollScheduled = false;
@@ -151,6 +227,10 @@ export {
     initChatUI,
     renderChat,
     addMessage,
+    clearComposer,
+    focusComposer,
+    setComposerBusy,
+    setConnectionStatus,
     showAssistantError,
     createTypingIndicator,
     createStreamingAssistantMessage,
