@@ -12,7 +12,10 @@ const dom = {
 };
 
 let onSend = null;
-/** 初始化聊天 UI 所需的 DOM 引用 */
+
+/**
+ * 初始化聊天 UI，接收 DOM 引用和回调函数。
+ */
 function initChatUI({
     chatContainer,
     messageInput,
@@ -35,12 +38,12 @@ function initChatUI({
     syncComposerState();
 }
 
-/** 根据输入内容与忙碌状态同步发送按钮 */
+/** 根据输入内容与忙碌状态同步发送按钮的禁用状态 */
 function syncComposerState() {
     dom.sendButton.disabled = dom.messageInput.disabled || !dom.messageInput.value.trim();
 }
 
-/** 根据内容自动调整输入框高度 */
+/** 根据内容自动调整输入框高度，支持多行输入 */
 function resizeComposer() {
     dom.messageInput.style.height = 'auto';
     dom.messageInput.style.height = `${dom.messageInput.scrollHeight}px`;
@@ -53,7 +56,7 @@ function submitComposer() {
     onSend(content);
 }
 
-/** 绑定输入区的局部交互 */
+/** 绑定输入区的局部交互事件（点击发送、回车发送、输入监听） */
 function bindComposerEvents() {
     dom.sendButton.addEventListener('click', submitComposer);
 
@@ -77,7 +80,7 @@ function clearComposer() {
     syncComposerState();
 }
 
-/** 设置输入区忙碌状态 */
+/** 设置输入区忙碌状态（禁用/启用输入框） */
 function setComposerBusy(isBusy) {
     dom.messageInput.disabled = isBusy;
     syncComposerState();
@@ -99,25 +102,20 @@ function setConnectionStatus(isConnected) {
 
 let scrollScheduled = false;
 
-/** 滚动聊天容器到底部 */
-function scrollToBottom() {
-    dom.chatContainer.scrollTop = dom.chatContainer.scrollHeight;
-}
-
-/** 节流滚动到底部，避免流式更新时频繁触发 */
+/** 节流滚动到底部，通过 requestAnimationFrame 避免频繁触发 */
 function scheduleScrollToBottom() {
     if (scrollScheduled) return;
     scrollScheduled = true;
     requestAnimationFrame(() => {
         scrollScheduled = false;
-        scrollToBottom();
+        dom.chatContainer.scrollTop = dom.chatContainer.scrollHeight;
     });
 }
 
-/** 追加消息到聊天区并滚到底部 */
+/** 追加消息到聊天区并触发节流滚动 */
 function appendMessage(element) {
     dom.chatContainer.appendChild(element);
-    scrollToBottom();
+    scheduleScrollToBottom();
 }
 
 /** 创建 assistant 消息元素（历史、流式、错误消息统一入口） */
@@ -139,7 +137,7 @@ function createAssistantMessageElement({ content = '', reasoning = '' } = {}) {
     return { el, messageContent, thinkingSection, thinkingContent };
 }
 
-/** 创建用户消息元素。 */
+/** 创建用户消息元素 */
 function createUserMessageElement(message) {
     const el = document.createElement('div');
     el.className = 'message user-message';
@@ -150,7 +148,7 @@ function createUserMessageElement(message) {
     return el;
 }
 
-/** 更新流式 assistant 消息（流式阶段用纯文本展示）。 */
+/** 更新流式 assistant 消息（流式阶段用纯文本展示） */
 function updateAssistantMessage(refs, { content, reasoning }) {
     if (reasoning) {
         refs.thinkingSection.hidden = false;
@@ -162,14 +160,15 @@ function updateAssistantMessage(refs, { content, reasoning }) {
     scheduleScrollToBottom();
 }
 
-/** 流式结束后保留纯文本显示。 */
+/** 流式结束后保留纯文本显示 */
 function finalizeAssistantMessage(refs, content) {
     if (content) {
         refs.messageContent.textContent = content;
     }
-    scrollToBottom();
+    scheduleScrollToBottom();
 }
 
+/** 创建并显示"正在思考"指示器 */
 function createTypingIndicator() {
     const indicator = dom.typingIndicatorTemplate.content.firstElementChild.cloneNode(true);
     appendMessage(indicator);
@@ -215,7 +214,7 @@ function showAssistantError(message) {
     appendMessage(createAssistantMessageElement({ content: message }).el);
 }
 
-/** 追加用户消息到聊天区（自动移除空状态）。 */
+/** 追加用户消息到聊天区（自动移除空状态） */
 function addUserMessage(message) {
     const emptyState = dom.chatContainer.querySelector('.empty-state');
     if (emptyState) emptyState.remove();
