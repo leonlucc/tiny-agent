@@ -6,17 +6,13 @@ import { readSSEStream } from './services/sse.js';
 import { apiClient } from './services/api.js';
 import {
     initChatUI,
-    renderChat,
-    addMessage,
+    addUserMessage,
     clearComposer,
     focusComposer,
     setComposerBusy,
     setConnectionStatus,
     showAssistantError,
-    createTypingIndicator,
-    createStreamingAssistantMessage,
-    updateStreamingAssistantMessage,
-    finalizeStreamingAssistantMessage
+    createAssistantResponseView
 } from './components/chat-ui.js';
 
 // 应用级状态保持最小化；输入内容和 DOM 展示状态由 chat-ui 管理。
@@ -29,7 +25,6 @@ const DOMElements = {
     chatContainer: null,
     messageInput: null,
     sendButton: null,
-    emptyState: null,
     assistantMessageTemplate: null,
     connectionStatus: null
 };
@@ -39,14 +34,12 @@ function init() {
     cacheDOMElements();
     initChatUI({
         chatContainer: DOMElements.chatContainer,
-        emptyState: DOMElements.emptyState,
         assistantMessageTemplate: DOMElements.assistantMessageTemplate,
         messageInput: DOMElements.messageInput,
         sendButton: DOMElements.sendButton,
         connectionStatus: DOMElements.connectionStatus,
         onSend: sendMessage
     });
-    renderChat(null);
     checkConnection();
 }
 
@@ -57,7 +50,6 @@ function cacheDOMElements() {
     DOMElements.chatContainer = document.getElementById('chat-container');
     DOMElements.messageInput = document.getElementById('message-input');
     DOMElements.sendButton = document.getElementById('send-button');
-    DOMElements.emptyState = document.getElementById('empty-state');
     DOMElements.assistantMessageTemplate = document.getElementById('assistant-message-template');
     DOMElements.connectionStatus = document.getElementById('connection-status');
 }
@@ -76,29 +68,18 @@ async function sendMessage(content) {
     if (!content || appState.isTyping) return;
 
     // 请求期间锁定输入区，防止同时发起多个流式请求。
-    addMessage({ role: 'user', content });
+    addUserMessage(content);
     clearComposer();
     appState.isTyping = true;
     setComposerBusy(true);
 
-    const typingIndicator = createTypingIndicator();
-    let streamRefs = null;
+    const responseView = createAssistantResponseView();
 
     try {
-        // assistant 容器先隐藏，收到首个有效数据块后再替换思考指示器。
-        streamRefs = createStreamingAssistantMessage({ hidden: true });
         const reader = await apiClient.chatStream(content);
         let streamedContent = '';
         let streamedReasoning = '';
         let hasShownAssistantMessage = false;
-
-        // reasoning 和 content 都可能成为首个事件，因此共用一次性展示逻辑。
-        const showAssistantMessage = () => {
-            if (hasShownAssistantMessage) return;
-            hasShownAssistantMessage = true;
-            typingIndicator.remove();
-            streamRefs.el.hidden = false;
-        };
 
         // SSE 工具负责协议解析；应用层只处理约定的业务事件类型。
         for await (const data of readSSEStream(reader)) {
@@ -108,32 +89,26 @@ async function sendMessage(content) {
 
             if (data.type === 'reasoning' && data.chunk) {
                 streamedReasoning += data.chunk;
-                showAssistantMessage();
-                updateStreamingAssistantMessage(streamRefs, { reasoning: streamedReasoning });
+                hasShownAssistantMessage = true;
+                responseView.update({ reasoning: streamedReasoning });
             }
 
             if (data.type === 'content' && data.chunk) {
                 streamedContent += data.chunk;
-                showAssistantMessage();
-                updateStreamingAssistantMessage(streamRefs, { content: streamedContent });
+                hasShownAssistantMessage = true;
+                responseView.update({ content: streamedContent });
             }
         }
 
         // 流正常结束但没有有效数据时，移除占位节点并给出明确反馈。
         if (hasShownAssistantMessage) {
-            finalizeStreamingAssistantMessage(streamRefs, streamedContent);
+            responseView.complete(streamedContent);
         } else {
-            typingIndicator.remove();
-            streamRefs.el.remove();
+            responseView.dispose();
             showAssistantError('抱歉，未收到有效回复。');
         }
     } catch (error) {
-        if (typingIndicator.parentNode) {
-            typingIndicator.remove();
-        }
-        if (streamRefs?.el?.parentNode) {
-            streamRefs.el.remove();
-        }
+        responseView.dispose();
         showAssistantError(`抱歉，处理您的请求时出错: ${error.message}`);
         checkConnection();
     } finally {
@@ -143,5 +118,3 @@ async function sendMessage(content) {
         focusComposer();
     }
 }
-
-export { init };

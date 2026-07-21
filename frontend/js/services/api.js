@@ -2,12 +2,9 @@
  * API 服务：封装 Tiny Agent 后端接口。
  */
 
-const API_CONFIG = {
-    ENDPOINTS: {
-        CHAT_STREAM: '/api/chat/stream',
-        HEALTH: '/api/health'
-    }
-};
+// 使用扁平化常量替代嵌套对象
+const CHAT_STREAM_ENDPOINT = '/api/chat/stream';
+const HEALTH_ENDPOINT = '/api/health';
 
 /**
  * 封装所有后端接口调用。
@@ -56,7 +53,7 @@ class APIClient {
      * @returns {Promise<ReadableStreamDefaultReader<Uint8Array>>} 流式响应读取器
      */
     async chatStream(message) {
-        const response = await this.request(API_CONFIG.ENDPOINTS.CHAT_STREAM, {
+        const response = await this.request(CHAT_STREAM_ENDPOINT, {
             method: 'POST',
             body: JSON.stringify({ message })
         });
@@ -74,7 +71,7 @@ class APIClient {
      */
     async checkConnection() {
         try {
-            await this.request(API_CONFIG.ENDPOINTS.HEALTH, {
+            await this.request(HEALTH_ENDPOINT, {
                 method: 'GET'
             });
             return true;
@@ -86,4 +83,4 @@ class APIClient {
 
 const apiClient = new APIClient();
 
-export { apiClient, APIClient, API_CONFIG };
+export { apiClient, APIClient };

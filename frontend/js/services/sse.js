@@ -18,21 +18,22 @@ async function* readSSEStream(reader) {
             if (!eventData) continue;
             if (eventData === '[DONE]') return;
 
-            try {
-                yield JSON.parse(eventData);
-            } catch (error) {
-                console.error('SSE解析错误:', error, '数据:', eventData);
-            }
+            yield parseEventData(eventData);
         }
     }
 
     const eventData = collectEventData(buffer);
     if (eventData && eventData !== '[DONE]') {
-        try {
-            yield JSON.parse(eventData);
-        } catch (error) {
-            console.error('SSE剩余数据解析错误:', error);
-        }
+        yield parseEventData(eventData);
+    }
+}
+
+/** 将 SSE data 解析为业务事件；协议损坏时交由应用层统一处理。 */
+function parseEventData(eventData) {
+    try {
+        return JSON.parse(eventData);
+    } catch (error) {
+        throw new Error(`无法解析 SSE 事件: ${error.message}`, { cause: error });
     }
 }
 

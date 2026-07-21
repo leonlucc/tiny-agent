@@ -37,6 +37,7 @@
     /* ========== 布局变量 ========== */
     --border-radius: 8px;
     --transition: all 0.3s ease;
+    --content-width: 80%;
 }
 
 /* ========== 全局基础样式 ========== */
@@ -135,7 +136,7 @@ body {
     display: flex;
     flex-direction: column;
     gap: 20px;
-    width: 80%;
+    width: var(--content-width);
     margin: 0 auto;
     background: var(--bg-main);
 }
@@ -231,7 +232,7 @@ body {
 
 .input-container {
     padding: 5px 0;
-    width: 80%;
+    width: var(--content-width);
     margin: 0 auto;
     background-color: var(--bg-main);
     z-index: 5;
@@ -372,6 +373,10 @@ body {
 /* ========== 移动端响应式 ========== */
 
 @media (max-width: 768px) {
+    :root {
+        --content-width: 90%;
+    }
+
     body {
         flex-direction: column;
     }
@@ -392,11 +397,4 @@ body {
         max-width: 90%;
     }
 
-    .chat-container {
-        width: 90%;
-    }
-
-    .input-container {
-        width: 90%;
-    }
 }

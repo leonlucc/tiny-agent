@@ -4,7 +4,6 @@
 
 const dom = {
     chatContainer: null,
-    emptyState: null,
     assistantMessageTemplate: null,
     messageInput: null,
     sendButton: null,
@@ -12,12 +11,9 @@ const dom = {
 };
 
 let onSend = null;
-let composerBusy = false;
-
 /** 初始化聊天 UI 所需的 DOM 引用 */
 function initChatUI(refs) {
     dom.chatContainer = refs.chatContainer;
-    dom.emptyState = refs.emptyState;
     dom.assistantMessageTemplate = refs.assistantMessageTemplate;
     dom.messageInput = refs.messageInput;
     dom.sendButton = refs.sendButton;
@@ -31,7 +27,7 @@ function initChatUI(refs) {
 
 /** 根据输入内容与忙碌状态同步发送按钮 */
 function syncComposerState() {
-    dom.sendButton.disabled = composerBusy || !dom.messageInput.value.trim();
+    dom.sendButton.disabled = dom.messageInput.disabled || !dom.messageInput.value.trim();
 }
 
 /** 根据内容自动调整输入框高度 */
@@ -43,7 +39,7 @@ function resizeComposer() {
 /** 将当前输入内容提交给应用调度中心 */
 function submitComposer() {
     const content = dom.messageInput.value.trim();
-    if (!content || composerBusy) return;
+    if (!content || dom.messageInput.disabled) return;
     onSend(content);
 }
 
@@ -73,7 +69,7 @@ function clearComposer() {
 
 /** 设置输入区忙碌状态 */
 function setComposerBusy(isBusy) {
-    composerBusy = isBusy;
+    dom.messageInput.disabled = isBusy;
     syncComposerState();
 }
 
@@ -133,34 +129,19 @@ function createAssistantMessageElement({ content = '', reasoning = '' } = {}) {
     return { el, messageContent, thinkingSection, thinkingContent };
 }
 
-/** 根据消息对象创建 DOM 元素 */
-function createMessageElement(message) {
-    if (message.role === 'user') {
-        const el = document.createElement('div');
-        el.className = 'message user-message';
-        const content = document.createElement('div');
-        content.className = 'message-content';
-        content.textContent = message.content;
-        el.appendChild(content);
-        return el;
-    }
-
-    return createAssistantMessageElement({
-        content: message.content,
-        reasoning: message.reasoning || ''
-    }).el;
+/** 创建用户消息元素。 */
+function createUserMessageElement(message) {
+    const el = document.createElement('div');
+    el.className = 'message user-message';
+    const content = document.createElement('div');
+    content.className = 'message-content';
+    content.textContent = message;
+    el.appendChild(content);
+    return el;
 }
 
-/** 创建流式 assistant 消息容器并追加到聊天区 */
-function createStreamingAssistantMessage({ hidden = false } = {}) {
-    const refs = createAssistantMessageElement();
-    refs.el.hidden = hidden;
-    appendMessage(refs.el);
-    return refs;
-}
-
-/** 更新流式 assistant 消息（流式阶段用纯文本展示） */
-function updateStreamingAssistantMessage(refs, { content, reasoning }) {
+/** 更新流式 assistant 消息（流式阶段用纯文本展示）。 */
+function updateAssistantMessage(refs, { content, reasoning }) {
     if (reasoning) {
         refs.thinkingSection.hidden = false;
         refs.thinkingContent.textContent = reasoning;
@@ -171,8 +152,8 @@ function updateStreamingAssistantMessage(refs, { content, reasoning }) {
     scheduleScrollToBottom();
 }
 
-/** 流式结束后保留纯文本显示 */
-function finalizeStreamingAssistantMessage(refs, content) {
+/** 流式结束后保留纯文本显示。 */
+function finalizeAssistantMessage(refs, content) {
     if (content) {
         refs.messageContent.textContent = content;
     }
@@ -195,45 +176,59 @@ function createTypingIndicator() {
     return indicator;
 }
 
+/**
+ * 创建一次 assistant 回复的 UI 生命周期，隐藏具体 DOM 引用。
+ * @returns {{update: Function, complete: Function, dispose: Function}}
+ */
+function createAssistantResponseView() {
+    const typingIndicator = createTypingIndicator();
+    const refs = createAssistantMessageElement();
+    refs.el.hidden = true;
+    appendMessage(refs.el);
+    let shown = false;
+
+    const show = () => {
+        if (shown) return;
+        shown = true;
+        typingIndicator.remove();
+        refs.el.hidden = false;
+    };
+
+    return {
+        update(parts) {
+            show();
+            updateAssistantMessage(refs, parts);
+        },
+        complete(content) {
+            show();
+            finalizeAssistantMessage(refs, content);
+        },
+        dispose() {
+            typingIndicator.remove();
+            refs.el.remove();
+        }
+    };
+}
+
 /** 在聊天区显示 assistant 风格的错误消息 */
 function showAssistantError(message) {
     appendMessage(createAssistantMessageElement({ content: message }).el);
 }
 
-/** 渲染整个会话的聊天消息列表 */
-function renderChat(session) {
-    dom.chatContainer.innerHTML = '';
-
-    if (!session || !session.messages || session.messages.length === 0) {
-        dom.chatContainer.appendChild(dom.emptyState.cloneNode(true));
-        return;
-    }
-
-    session.messages.forEach(message => {
-        dom.chatContainer.appendChild(createMessageElement(message));
-    });
-
-    scrollToBottom();
-}
-
-/** 追加单条消息到聊天区（自动移除空状态） */
-function addMessage(message) {
+/** 追加用户消息到聊天区（自动移除空状态）。 */
+function addUserMessage(message) {
     const emptyState = dom.chatContainer.querySelector('.empty-state');
     if (emptyState) emptyState.remove();
-    appendMessage(createMessageElement(message));
+    appendMessage(createUserMessageElement(message));
 }
 
 export {
     initChatUI,
-    renderChat,
-    addMessage,
+    addUserMessage,
     clearComposer,
     focusComposer,
     setComposerBusy,
     setConnectionStatus,
     showAssistantError,
-    createTypingIndicator,
-    createStreamingAssistantMessage,
-    updateStreamingAssistantMessage,
-    finalizeStreamingAssistantMessage
+    createAssistantResponseView
 };
