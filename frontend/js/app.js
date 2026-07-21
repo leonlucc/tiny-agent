@@ -15,43 +15,28 @@ import {
     createAssistantResponseView
 } from './components/chat-ui.js';
 
-// 应用级状态保持最小化；输入内容和 DOM 展示状态由 chat-ui 管理。
 const appState = {
     isTyping: false
 };
 
-// 页面启动时统一收集 DOM，再注入 UI 组件，避免各模块重复查询全局文档。
-const DOMElements = {
-    chatContainer: null,
-    messageInput: null,
-    sendButton: null,
-    assistantMessageTemplate: null,
-    connectionStatus: null
-};
-
-/** 初始化应用并建立 UI 事件到应用调度函数的连接。 */
 function init() {
-    cacheDOMElements();
-    initChatUI({
-        chatContainer: DOMElements.chatContainer,
-        assistantMessageTemplate: DOMElements.assistantMessageTemplate,
-        messageInput: DOMElements.messageInput,
-        sendButton: DOMElements.sendButton,
-        connectionStatus: DOMElements.connectionStatus,
-        onSend: sendMessage
-    });
+    const refs = collectDOMElements();
+    initChatUI({ ...refs, onSend: sendMessage });
     checkConnection();
 }
 
 document.addEventListener('DOMContentLoaded', init);
 
-/** 缓存 HTML 中预定义的页面节点。 */
-function cacheDOMElements() {
-    DOMElements.chatContainer = document.getElementById('chat-container');
-    DOMElements.messageInput = document.getElementById('message-input');
-    DOMElements.sendButton = document.getElementById('send-button');
-    DOMElements.assistantMessageTemplate = document.getElementById('assistant-message-template');
-    DOMElements.connectionStatus = document.getElementById('connection-status');
+/** 统一收集 DOM，再注入 UI 组件，避免各模块重复查询全局文档。 */
+function collectDOMElements() {
+    return {
+        chatContainer: document.getElementById('chat-container'),
+        messageInput: document.getElementById('message-input'),
+        sendButton: document.getElementById('send-button'),
+        assistantMessageTemplate: document.getElementById('assistant-message-template'),
+        typingIndicatorTemplate: document.getElementById('typing-indicator-template'),
+        connectionStatus: document.getElementById('connection-status')
+    };
 }
 
 /** 检测后端服务是否可用，并将结果交给 UI 展示。 */

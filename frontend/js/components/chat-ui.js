@@ -5,6 +5,7 @@
 const dom = {
     chatContainer: null,
     assistantMessageTemplate: null,
+    typingIndicatorTemplate: null,
     messageInput: null,
     sendButton: null,
     connectionStatus: null
@@ -12,13 +13,22 @@ const dom = {
 
 let onSend = null;
 /** 初始化聊天 UI 所需的 DOM 引用 */
-function initChatUI(refs) {
-    dom.chatContainer = refs.chatContainer;
-    dom.assistantMessageTemplate = refs.assistantMessageTemplate;
-    dom.messageInput = refs.messageInput;
-    dom.sendButton = refs.sendButton;
-    dom.connectionStatus = refs.connectionStatus;
-    onSend = refs.onSend;
+function initChatUI({
+    chatContainer,
+    messageInput,
+    sendButton,
+    assistantMessageTemplate,
+    typingIndicatorTemplate,
+    connectionStatus,
+    onSend: sendCallback
+}) {
+    dom.chatContainer = chatContainer;
+    dom.messageInput = messageInput;
+    dom.sendButton = sendButton;
+    dom.assistantMessageTemplate = assistantMessageTemplate;
+    dom.typingIndicatorTemplate = typingIndicatorTemplate;
+    dom.connectionStatus = connectionStatus;
+    onSend = sendCallback;
 
     bindComposerEvents();
     resizeComposer();
@@ -160,18 +170,8 @@ function finalizeAssistantMessage(refs, content) {
     scrollToBottom();
 }
 
-/** 创建并显示"正在思考"指示器 */
 function createTypingIndicator() {
-    const indicator = document.createElement('div');
-    indicator.className = 'typing-indicator';
-    for (let i = 0; i < 3; i++) {
-        const dot = document.createElement('div');
-        dot.className = 'typing-dot';
-        indicator.appendChild(dot);
-    }
-    const label = document.createElement('span');
-    label.textContent = '正在思考...';
-    indicator.appendChild(label);
+    const indicator = dom.typingIndicatorTemplate.content.firstElementChild.cloneNode(true);
     appendMessage(indicator);
     return indicator;
 }
