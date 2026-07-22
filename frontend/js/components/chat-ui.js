@@ -4,6 +4,7 @@
 
 const dom = {
     chatContainer: null,
+    userMessageTemplate: null,
     assistantMessageTemplate: null,
     typingIndicatorTemplate: null,
     messageInput: null,
@@ -20,6 +21,7 @@ function initChatUI({
     chatContainer,
     messageInput,
     sendButton,
+    userMessageTemplate,
     assistantMessageTemplate,
     typingIndicatorTemplate,
     connectionStatus,
@@ -28,6 +30,7 @@ function initChatUI({
     dom.chatContainer = chatContainer;
     dom.messageInput = messageInput;
     dom.sendButton = sendButton;
+    dom.userMessageTemplate = userMessageTemplate;
     dom.assistantMessageTemplate = assistantMessageTemplate;
     dom.typingIndicatorTemplate = typingIndicatorTemplate;
     dom.connectionStatus = connectionStatus;
@@ -118,54 +121,18 @@ function appendMessage(element) {
     scheduleScrollToBottom();
 }
 
-/** 创建 assistant 消息元素（历史、流式、错误消息统一入口） */
-function createAssistantMessageElement({ content = '', reasoning = '' } = {}) {
-    const el = dom.assistantMessageTemplate.content.firstElementChild.cloneNode(true);
-    const messageContent = el.querySelector('.message-content');
-    const thinkingSection = el.querySelector('.thinking-section');
-    const thinkingContent = el.querySelector('.thinking-content');
-
-    if (reasoning) {
-        thinkingSection.hidden = false;
-        thinkingContent.textContent = reasoning;
+/** 创建消息元素（用户或助理），统一使用 <template> */
+function createMessageElement(type, content, reasoning) {
+    const template = type === 'user' ? dom.userMessageTemplate : dom.assistantMessageTemplate;
+    const el = template.content.firstElementChild.cloneNode(true);
+    const container = el.querySelector('.message-content');
+    container.textContent = content || '';
+    if (type === 'assistant' && reasoning) {
+        const section = el.querySelector('.thinking-section');
+        section.hidden = false;
+        el.querySelector('.thinking-content').textContent = reasoning;
     }
-
-    if (content) {
-        messageContent.textContent = content;
-    }
-
-    return { el, messageContent, thinkingSection, thinkingContent };
-}
-
-/** 创建用户消息元素 */
-function createUserMessageElement(message) {
-    const el = document.createElement('div');
-    el.className = 'message user-message';
-    const content = document.createElement('div');
-    content.className = 'message-content';
-    content.textContent = message;
-    el.appendChild(content);
-    return el;
-}
-
-/** 更新流式 assistant 消息（流式阶段用纯文本展示） */
-function updateAssistantMessage(refs, { content, reasoning }) {
-    if (reasoning) {
-        refs.thinkingSection.hidden = false;
-        refs.thinkingContent.textContent = reasoning;
-    }
-    if (content !== undefined) {
-        refs.messageContent.textContent = content;
-    }
-    scheduleScrollToBottom();
-}
-
-/** 流式结束后保留纯文本显示 */
-function finalizeAssistantMessage(refs, content) {
-    if (content) {
-        refs.messageContent.textContent = content;
-    }
-    scheduleScrollToBottom();
+    return { el, container };
 }
 
 /** 创建并显示"正在思考"指示器 */
@@ -176,49 +143,60 @@ function createTypingIndicator() {
 }
 
 /**
- * 创建一次 assistant 回复的 UI 生命周期，隐藏具体 DOM 引用。
+ * 创建一次 assistant 回复的 UI 生命周期。
  * @returns {{update: Function, complete: Function, dispose: Function}}
  */
 function createAssistantResponseView() {
     const typingIndicator = createTypingIndicator();
-    const refs = createAssistantMessageElement();
-    refs.el.hidden = true;
-    appendMessage(refs.el);
+    const { el } = createMessageElement('assistant');
+    el.hidden = true;
+    appendMessage(el);
     let shown = false;
 
     const show = () => {
         if (shown) return;
         shown = true;
         typingIndicator.remove();
-        refs.el.hidden = false;
+        el.hidden = false;
     };
 
     return {
-        update(parts) {
+        update({ content, reasoning }) {
             show();
-            updateAssistantMessage(refs, parts);
+            if (reasoning) {
+                const section = el.querySelector('.thinking-section');
+                section.hidden = false;
+                el.querySelector('.thinking-content').textContent = reasoning;
+            }
+            if (content !== undefined) {
+                el.querySelector('.message-content').textContent = content;
+            }
+            scheduleScrollToBottom();
         },
         complete(content) {
             show();
-            finalizeAssistantMessage(refs, content);
+            if (content) {
+                el.querySelector('.message-content').textContent = content;
+            }
+            scheduleScrollToBottom();
         },
         dispose() {
             typingIndicator.remove();
-            refs.el.remove();
+            el.remove();
         }
     };
 }
 
 /** 在聊天区显示 assistant 风格的错误消息 */
 function showAssistantError(message) {
-    appendMessage(createAssistantMessageElement({ content: message }).el);
+    appendMessage(createMessageElement('assistant', message).el);
 }
 
 /** 追加用户消息到聊天区（自动移除空状态） */
 function addUserMessage(message) {
     const emptyState = dom.chatContainer.querySelector('.empty-state');
     if (emptyState) emptyState.remove();
-    appendMessage(createUserMessageElement(message));
+    appendMessage(createMessageElement('user', message).el);
 }
 
 export {

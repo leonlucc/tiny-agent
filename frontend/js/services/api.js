@@ -2,7 +2,7 @@
  * API 服务：封装 Tiny Agent 后端接口。
  */
 
-// 使用扁平化常量替代嵌套对象
+// 后端接口路径
 const CHAT_STREAM_ENDPOINT = '/api/chat/stream';
 const HEALTH_ENDPOINT = '/api/health';
 
@@ -81,6 +81,4 @@ class APIClient {
     }
 }
 
-const apiClient = new APIClient();
-
-export { apiClient, APIClient };
+export { APIClient };

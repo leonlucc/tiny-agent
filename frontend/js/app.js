@@ -3,7 +3,7 @@
  */
 
 import { readSSEStream } from './services/sse.js';
-import { apiClient } from './services/api.js';
+import { APIClient } from './services/api.js';
 import {
     initChatUI,
     addUserMessage,
@@ -14,6 +14,8 @@ import {
     showAssistantError,
     createAssistantResponseView
 } from './components/chat-ui.js';
+
+const apiClient = new APIClient();
 
 const appState = {
     isTyping: false
@@ -33,6 +35,7 @@ function collectDOMElements() {
         chatContainer: document.getElementById('chat-container'),
         messageInput: document.getElementById('message-input'),
         sendButton: document.getElementById('send-button'),
+        userMessageTemplate: document.getElementById('user-message-template'),
         assistantMessageTemplate: document.getElementById('assistant-message-template'),
         typingIndicatorTemplate: document.getElementById('typing-indicator-template'),
         connectionStatus: document.getElementById('connection-status')
