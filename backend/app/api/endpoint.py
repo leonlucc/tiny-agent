@@ -5,11 +5,9 @@ from __future__ import annotations
 import json
 import logging
 from collections.abc import AsyncIterator
-
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
-
 from app.service.llm_service import stream_chat_events
 
 

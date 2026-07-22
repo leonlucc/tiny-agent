@@ -1,36 +1,20 @@
-"""LLM 客户端配置与流式调用服务。"""
+"""LLM 客户端管理与流式调用服务。"""
 
 from __future__ import annotations
 
-import os
 from collections.abc import AsyncIterator
 from openai import AsyncOpenAI
+from app.config import load_llm_config
 
 
 _client: AsyncOpenAI | None = None
 _model: str = ""
 
 
-def _load_config() -> tuple[str, str, str]:
-    """从环境变量读取并校验 LLM 配置，纯函数不涉及任何状态。"""
-    api_key = os.getenv("LLM_API_KEY")
-    base_url = os.getenv("LLM_BASE_URL")
-    model = os.getenv("LLM_MODEL")
-
-    if not api_key or api_key == "your_api_key_here":
-        raise RuntimeError("未配置 LLM_API_KEY，请先在 backend/.env 中填写 API Key。")
-    if not base_url:
-        raise RuntimeError("未配置 LLM_BASE_URL，请先在 backend/.env 中填写模型服务地址。")
-    if not model:
-        raise RuntimeError("未配置 LLM_MODEL，请先在 backend/.env 中填写模型名称。")
-
-    return api_key, base_url, model
-
-
 async def init_client() -> None:
     """启动时调用：创建并缓存 AsyncOpenAI 客户端。"""
     global _client, _model
-    api_key, base_url, model = _load_config()
+    api_key, base_url, model = load_llm_config()
     _client = AsyncOpenAI(api_key=api_key, base_url=base_url)
     _model = model
 
