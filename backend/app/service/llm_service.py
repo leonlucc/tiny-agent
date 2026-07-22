@@ -4,28 +4,15 @@ from __future__ import annotations
 
 import os
 from collections.abc import AsyncIterator
-from pathlib import Path
-from typing import Optional
-
-from dotenv import load_dotenv
 from openai import AsyncOpenAI
 
 
-BACKEND_DIR = Path(__file__).resolve().parents[2]
-
-_client: Optional[AsyncOpenAI] = None
-_model: Optional[str] = None
+_client: AsyncOpenAI | None = None
+_model: str = ""
 
 
-def _get_client() -> tuple[AsyncOpenAI, str]:
-    """延迟初始化客户端，从环境变量读取配置。"""
-    global _client, _model
-
-    if _client is not None and _model is not None:
-        return _client, _model
-
-    load_dotenv(BACKEND_DIR / ".env")
-
+def _load_config() -> tuple[str, str, str]:
+    """从环境变量读取并校验 LLM 配置，纯函数不涉及任何状态。"""
     api_key = os.getenv("LLM_API_KEY")
     base_url = os.getenv("LLM_BASE_URL")
     model = os.getenv("LLM_MODEL")
@@ -37,18 +24,24 @@ def _get_client() -> tuple[AsyncOpenAI, str]:
     if not model:
         raise RuntimeError("未配置 LLM_MODEL，请先在 backend/.env 中填写模型名称。")
 
+    return api_key, base_url, model
+
+
+async def init_client() -> None:
+    """启动时调用：创建并缓存 AsyncOpenAI 客户端。"""
+    global _client, _model
+    api_key, base_url, model = _load_config()
     _client = AsyncOpenAI(api_key=api_key, base_url=base_url)
     _model = model
-    return _client, _model
 
 
 async def stream_chat_events(
     message: str,
 ) -> AsyncIterator[dict[str, str]]:
     """调用 LLM 流式接口，并输出与传输协议无关的业务事件。"""
-    client, model = _get_client()
-    response = await client.chat.completions.create(
-        model=model,
+    assert _client is not None, "client 未初始化，请先调用 init_client()"
+    response = await _client.chat.completions.create(
+        model=_model,
         messages=[{"role": "user", "content": message}],
         stream=True,
         timeout=30.0,
@@ -72,9 +65,8 @@ async def stream_chat_events(
 
 
 async def close_client() -> None:
-    """关闭客户端连接。"""
-    global _client, _model
+    """关闭客户端连接（不涉及配置状态）。"""
+    global _client
     if _client is not None:
         await _client.close()
         _client = None
-        _model = None

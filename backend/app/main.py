@@ -3,19 +3,16 @@
 from __future__ import annotations
 
 from collections.abc import AsyncIterator
-from pathlib import Path
 import uvicorn
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from app.api.endpoint import router
-from app.service.llm_service import close_client
-
-BACKEND_DIR = Path(__file__).resolve().parents[1]
-PROJECT_ROOT = BACKEND_DIR.parent
-FRONTEND_DIR = PROJECT_ROOT / "frontend"
+from app.config import FRONTEND_DIR
+from app.service.llm_service import close_client, init_client
 
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
-    """管理应用生命周期，在关闭时清理资源。"""
+    """管理应用生命周期，启动时初始化 LLM 客户端，关闭时清理资源。"""
+    await init_client()
     yield
     await close_client()
 
@@ -30,6 +27,7 @@ def main() -> None:
     """启动本地 Web 服务。"""
     app = create_app()
     uvicorn.run(app, host="0.0.0.0", port=8000)
+
 
 if __name__ == "__main__":
     main()

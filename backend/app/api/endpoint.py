@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import logging
 from collections.abc import AsyncIterator
 
 from fastapi import APIRouter, HTTPException
@@ -10,6 +11,9 @@ from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 
 from app.service.llm_service import stream_chat_events
+
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
@@ -48,7 +52,7 @@ async def _stream_sse(events: AsyncIterator[dict[str, str]]) -> AsyncIterator[st
         async for event in events:
             yield f"data: {json.dumps(event, ensure_ascii=False)}\n\n"
     except Exception:
-        print("LLM 流式调用失败")
+        logger.exception("LLM 流式调用失败")
         error = {"type": "error", "message": "模型服务暂时不可用，请稍后重试。"}
         yield f"data: {json.dumps(error, ensure_ascii=False)}\n\n"
 
