@@ -84,19 +84,14 @@ body {
     font-size: 1.5rem;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
     color: var(--primary-color);
 }
 
-.sidebar-header h1 i {
-    background-color: rgba(67, 97, 238, 0.1);
-    color: var(--primary-color);
+.sidebar-header h1 .logo-img {
     width: 36px;
     height: 36px;
     border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
 }
 
 /* ========== 主聊天区样式 ========== */
@@ -349,11 +344,11 @@ body {
     color: var(--text-muted);
 }
 
-.empty-state i {
-    font-size: 4rem;
-    margin-bottom: 20px;
-    color: var(--border-hover);
-    opacity: 0.7;
+.empty-state .logo-img {
+    width: 120px;
+    height: 120px;
+    margin-bottom: 5px;
+    opacity: 0.2;
 }
 
 .empty-state h2 {
