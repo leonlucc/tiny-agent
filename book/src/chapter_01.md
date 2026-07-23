@@ -1,6 +1,6 @@
 # 第一章：Hello LLM（你好，大模型）
 
-> **导语**：本章是 Tiny Agent 的起点，不用前端、不做多轮历史，只先跑通“用户输入一句话，大模型回复一句话”的最小闭环。
+> **导语**：本章是 Tiny Agent 的起点，不用前端、不做多轮历史，只先跑通“用户输入一句话，大模型回复一句话”的最小闭环。完成本章后，你将掌握大模型的 API 调用方式，为 Agent 开发奠定基础。
 >
 > **源码版本**：[v0.1](https://github.com/leonlucc/tiny-agent/tree/v0.1)
 
@@ -42,7 +42,7 @@ AI: 你好，我是一个可以理解和生成文本的 AI 助手。
 3. 把用户输入包装成一条 `user` 消息，调用 `client.chat.completions.create()`。
 4. 从响应中取出 `response.choices[0].message.content` 并打印到终端。
 
-本版本没有 Web UI、没有多轮对话，它只解决一个问题：**确认代码能够真正访问 LLM，并拿到一次回复**。
+这个版本没有 Web UI、没有多轮对话，它只做一件事：**验证代码能成功调用LLM并获取回复**。
 ```mermaid
 flowchart LR
     User[CLI 终端<br/>用户输入/输出] -->|输入| App[Python 应用<br/>simple_call.py]
@@ -168,7 +168,8 @@ LLM_API_KEY=your_api_key_here
 LLM_BASE_URL=https://api.deepseek.com
 LLM_MODEL=deepseek-v4-flash
 ```
-安全提醒：`.env` 文件包含 API Key 等敏感信息，切记将其加入 .gitignore，避免意外提交到版本控制系统。
+💡 安全提醒：
+> `.env` 文件包含 API Key 等敏感信息，切记将其加入 .gitignore，避免意外提交到版本控制系统。
 
 💡 小贴士：如何快速获取 API Key？
 >本项目兼容标准的 OpenAI 协议，国内外的诸多主流平台都可以无缝接入。推荐注册并使用国内极速且高性价比的平台，例如 [DeepSeek](https://platform.deepseek.com/) 或 [硅基流动](https://siliconflow.cn/) 等 API 聚合服务。注册获取 `sk-...` 格式的密钥后，直接填入 .env 即可无缝运行。
@@ -310,7 +311,7 @@ def main() -> None:
 
 ## 5. Git Diff 导读
 
-本版本相对于空工程，核心变化是新增 `backend` 目录，上文已经详细讲解，完整代码已提交至 GitHub 仓库，你可以切换到 `v0.0.1` Tag查看或直接运行 `git checkout v0.0.1`查看。
+本版本相对于空工程，核心变化是新增 `backend` 目录，上文已经详细讲解，完整代码已提交至 GitHub 仓库，你可以切换到 `v0.1` Tag查看或直接运行 `git checkout v0.1`查看。
 
 ---
 
@@ -365,7 +366,7 @@ messages=[{"role": "user", "content": message}]
 
 ### 6.7 为什么错误处理非常简单？
 
-v0.0.1 的目标是跑通闭环，不是建立完整的错误分类体系。
+本章的目标是跑通闭环，不是建立完整的错误分类体系。
 
 因此代码只做两类处理：
 
@@ -390,6 +391,6 @@ v0.0.1 的目标是跑通闭环，不是建立完整的错误分类体系。
 
 ---
 
-下一章，我们会在这个基础上引入 Chat History，让 Tiny Agent 从“一问一答”走向“连续对话”。
+下一章，我们会在这个基础上引入流式 Web 输出，让 Tiny Agent 从一问一答的命令行，走向逐字呈现的浏览器。
 
-[→ 进入第二章：Chat（基础对话）](./chapter_02.md)
+[→ 进入第二章：Streaming Web（流式 Web 输出）](./chapter_02.md)
