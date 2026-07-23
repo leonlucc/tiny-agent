@@ -27,30 +27,29 @@
 
 我们将采用前后端分离架构：FastAPI Web 后端服务和原生 HTML + CSS + JavaScript构成的前端页面。先不引入 Web 服务器，后端同时负责 API 路由与前端静态文件托管，Web 页面和接口来自同一个服务，以保持项目的开箱即用。
 
-用户发送消息后，浏览器使用 `POST /api/chat/stream` 提交请求。后端把消息交给 LLM 服务层，并开启流式传输。模型每产生一段增量内容，服务层就把它转换为与厂商响应格式解耦的业务事件；接口层再把业务事件编码成 SSE 帧（Server-Sent Events，服务端推送事件）。浏览器持续读取响应流，解析出 `reasoning`、`content` 和 `error` 事件，最终增量更新页面。
+用户发送消息后，浏览器使用 `POST /api/chat/stream` 提交请求。后端把消息交给 LLM 服务，并开启流式传输。模型每产生一段增量内容，后端服务层就把它转换为与 LLM 服务响应格式解耦的业务事件；后端接口层再把业务事件编码成 SSE 帧（Server-Sent Events，服务端推送事件）。浏览器持续读取响应流，解析出事件内容，最终增量更新页面。
 
 ```mermaid
 flowchart LR
-    User["用户"] -->|输入消息| UI["Web 页面<br/>HTML / CSS / JavaScript"]
-    UI -->|"POST /api/chat/stream<br/>JSON 请求"| API["FastAPI 接口层<br/>endpoint.py"]
-    API -->|单条消息| Service["LLM 服务层<br/>llm_service.py"]
-    Service -->|"stream=True"| LLM["OpenAI 兼容<br/>LLM 服务"]
+    User["用户"] -->|输入消息| UI["前端 Web 页面<br/>HTML / CSS / JavaScript"]
+    UI -->|"POST /api/chat/stream<br/>JSON 请求"| API["后端接口层<br/>endpoint.py"]
+    API -->|单条消息| Service["后端服务层<br/>llm_service.py"]
+    Service -->|"stream=True"| LLM["LLM 服务<br/>大模型"]
     LLM -->|增量 Delta| Service
     Service -->|"reasoning / content<br/>业务事件"| API
-    API -->|SSE 数据帧| Parser["SSE 解析器<br/>sse.js"]
-    Parser -->|事件对象| App["交互调度<br/>app.js"]
-    App -->|增量文本| UI
+    API -->|"SSE 增量文本"| UI
+    UI -->|"回复消息"| User
 ```
 
 一次请求的运行流程如下：
 
 1. 页面把用户输入显示在聊天区，并锁定输入框，避免并发发送。
-2. `APIClient` 使用 `fetch()` 发起 POST 请求，取得响应体的 `ReadableStream` 读取器。
-3. 后端校验消息，调用异步 LLM 客户端并迭代模型返回的 chunk。
-4. 服务层提取增量中的思考内容和正文内容，产生统一业务事件。
-5. 接口层将每个事件编码为 `data: ...\n\n`，并立即写入响应。
-6. 前端按 SSE 空行边界拆帧，将 JSON 事件交给应用层。
-7. 应用层累积文本并更新同一个模型回复节点；收到 `[DONE]` 后恢复输入区。
+2. 前端 `APIClient` 使用 `fetch()` 函数发起 POST 请求，取得 SSE 响应体的读取器。
+3. 后端校验消息，调用异步 LLM 客户端并迭代模型返回的 chunk 消息块。
+4. 后端服务层提取增量中的思考内容和正文内容，产生统一业务事件。
+5. 后端接口层将每个事件编码为 `data: ...\n\n`，并立即写入响应。
+6. 前端按 SSE 空行边界拆帧，识别后端的业务事件。
+7. 前端累积文本并更新同一个模型回复消息的页面；收到 `[DONE]` 后恢复输入区。
 
 这里最重要的设计思想是：**流不能在中途任何一层被重新聚合**。只要某一层等待完整结果后再返回，前面的流式能力就会失去意义。
 
@@ -83,9 +82,9 @@ async for chunk in response:
     ...
 ```
 
-`stream=True` 后，SDK 返回的不再是一条完整消息，而是一系列增量 chunk。文本通常位于 `choices[0].delta.content`。chunk 是网络和模型服务决定的传输片段，可能是一个字、一个词，也可能是一小段文本，不能假设“一次 chunk 就等于一个字符”。页面看起来像逐字打印，本质上是收到一批就更新一批。
+通过设置 `stream=True` 后，SDK 返回的不再是一条完整消息，而是一系列增量 chunk。文本通常位于 `choices[0].delta.content`。chunk 是网络和模型服务决定的传输片段，可能是一个字、一个词，也可能是一小段文本，不能假设“一次 chunk 就等于一个字符”。页面看起来像逐字打印，本质上是收到一批就更新一批。
 
-某些推理模型还会通过非标准字段 `reasoning_content` 返回思考片段。项目把两类数据映射为不同业务事件：
+很多推理模型还会通过非标准字段 `reasoning_content` 返回思考片段。项目把两类数据映射为不同业务事件：
 
 ```json
 {"type": "reasoning", "chunk": "先分析问题……"}
@@ -96,7 +95,7 @@ async for chunk in response:
 
 ### 3.2 Python 异步生成器：边生产，边交付
 
-流式接口的核心不是返回一个列表，而是逐次 `yield`。`stream_chat_events()` 的返回类型是 `AsyncIterator`：
+流式接口的核心不是返回一个列表，而是逐次 `yield`。下面的`stream_chat_events()` 的返回类型是 `AsyncIterator`（异步迭代器），允许调用方按需、分批异步获取数据：
 
 ```python
 async def stream_chat_events(message: str) -> AsyncIterator[dict[str, str]]:
@@ -115,7 +114,7 @@ async def stream_chat_events(message: str) -> AsyncIterator[dict[str, str]]:
 
 ### 3.3 SSE：建立单向事件流
 
-Server-Sent Events（SSE）是一种基于 HTTP 的服务端到浏览器单向事件流。本章的交互方向正好符合它的特点：用户消息通过普通 POST 发向后端，模型生成结果沿同一个 HTTP 响应持续返回。
+SSE（Server-Sent Events）是一种基于 HTTP 的服务端到浏览器单向事件流。本章的交互方向正好符合它的特点：用户消息通过普通 POST 发向后端，模型生成结果沿同一个 HTTP 响应持续返回。
 
 最小 SSE 事件由 `data:` 行和一个空行组成：
 
@@ -157,21 +156,19 @@ const response = await fetch('/api/chat/stream', {
 const reader = response.body.getReader();
 ```
 
-与普通请求不同，流式响应不能直接调用 `response.json()`，因为此时完整响应尚未生成。代码通过 `response.body.getReader()` 取得读取器，随后反复调用 `reader.read()`，持续获得服务端已经发送的字节数据。
-
-`fetch()` 在这里负责 HTTP 请求和响应流读取。字节解码、SSE 分帧和 JSON 解析则交给独立的 `readSSEStream()`，避免把请求逻辑与传输协议解析混在一起。
+与普通请求不同，流式响应不能直接调用 `response.json()`，因为此时完整响应尚未生成。代码通过 `response.body.getReader()` 取得 `ReadableStream` 类型的读取器，随后反复调用 `reader.read()`，持续获得服务端已经发送的字节数据。
 
 ### 3.5 网络分块不等于 SSE 事件
 
-`reader.read()` 返回的是一次网络读取结果，而不是一个完整 SSE 事件。一次读取可能只包含半个 JSON，也可能同时包含多个事件。如果直接对每次读取调用 `JSON.parse()`，程序会在真实网络环境中随机失败。
+需要注意的是，前端的 `reader.read()` 返回的是一次网络读取结果，而不是一个完整 SSE 事件。一次读取可能只包含半个 JSON，也可能同时包含多个事件。如果直接对每次读取调用 `JSON.parse()`，程序会在真实网络环境中随机失败。
 
-`readSSEStream()` 因此维护一个跨读取周期的 `buffer`：
+因此需要维护一个跨读取周期的 `buffer`：
 
-1. 使用 `TextDecoder` 的流式模式把字节解码为 UTF-8 文本，避免多字节中文在分包处损坏。
+1. 使用 `TextDecoder` 的流式模式把收到的字节解码为 UTF-8 文本，避免多字节中文在分包处损坏。
 2. 把新文本追加到 `buffer`。
 3. 按 `\n\n` 或 `\r\n\r\n` 拆出所有完整事件。
 4. 保留最后一个可能不完整的片段，等待下一批字节。
-5. 提取事件中的 `data:` 行，遇到 `[DONE]` 结束迭代，否则解析 JSON 并向应用层 `yield`。
+5. 提取事件中的 `data:` 行，遇到 `[DONE]` 结束迭代，否则解析 JSON 并向上层应用层 `yield`。
 
 这层缓冲是流式前端能够稳定工作的关键。**传输层怎样分包，与应用层怎样分事件，是两件不同的事。**
 
@@ -179,7 +176,7 @@ const reader = response.body.getReader();
 
 ## 4. 工程实现
 
-本章把上一版集中在 `simple_call.py` 的 CLI 程序拆成配置层、LLM 服务层、API 层和前端展示层。
+本章把上一版集中在 `simple_call.py` 的 CLI 程序拆成后端服务层、后端接口层和前端展示层。
 
 ### 4.1 目录结构
 
