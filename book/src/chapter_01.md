@@ -168,11 +168,13 @@ LLM_API_KEY=your_api_key_here
 LLM_BASE_URL=https://api.deepseek.com
 LLM_MODEL=deepseek-v4-flash
 ```
-💡 安全提醒：
+> **💡 小贴士：安全提醒**
+>
 > `.env` 文件包含 API Key 等敏感信息，切记将其加入 .gitignore，避免意外提交到版本控制系统。
 
-💡 小贴士：如何快速获取 API Key？
->本项目兼容标准的 OpenAI 协议，国内外的诸多主流平台都可以无缝接入。推荐注册并使用国内极速且高性价比的平台，例如 [DeepSeek](https://platform.deepseek.com/) 或 [硅基流动](https://siliconflow.cn/) 等 API 聚合服务。注册获取 `sk-...` 格式的密钥后，直接填入 .env 即可无缝运行。
+> **💡 小贴士：如何快速获取 API Key？**
+>
+> 本项目兼容标准的 OpenAI 协议，国内外的诸多主流平台都可以无缝接入。推荐注册并使用国内极速且高性价比的平台，例如 [DeepSeek](https://platform.deepseek.com/) 或 [硅基流动](https://siliconflow.cn/) 等 API 聚合服务。注册获取 `sk-...` 格式的密钥后，直接填入 .env 即可无缝运行。
 
 
 ### 4.4 运行入口
