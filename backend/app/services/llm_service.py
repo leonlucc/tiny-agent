@@ -23,7 +23,8 @@ async def stream_chat_events(
     message: str,
 ) -> AsyncIterator[dict[str, str]]:
     """调用 LLM 流式接口，并输出与传输协议无关的业务事件。"""
-    assert _client is not None, "client 未初始化，请先调用 init_client()"
+    if _client is None:
+        raise RuntimeError("LLM 客户端尚未初始化")
     response = await _client.chat.completions.create(
         model=_model,
         messages=[{"role": "user", "content": message}],

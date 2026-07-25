@@ -8,7 +8,7 @@ from types import SimpleNamespace
 from unittest.mock import AsyncMock, patch
 
 from app.api.endpoint import _stream_sse
-from app.service.llm_service import stream_chat_events
+from app.services.llm_service import stream_chat_events
 
 
 async def collect(iterator):
@@ -28,7 +28,7 @@ class StreamChatEventsTest(unittest.IsolatedAsyncioTestCase):
         )
 
         with patch(
-            "app.service.llm_service.create_client",
+            "app.services.llm_service.create_client",
             return_value=(client, "demo-model"),
         ):
             events = await collect(stream_chat_events("你好"))

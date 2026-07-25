@@ -8,7 +8,7 @@ from collections.abc import AsyncIterator
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
-from app.service.llm_service import stream_chat_events
+from app.services.llm_service import stream_chat_events
 
 
 logger = logging.getLogger(__name__)
