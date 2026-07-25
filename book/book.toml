@@ -2,3 +2,13 @@
 title = "极简智能体：AI Agent 渐进式开发实战"
 authors = ["leon"]
 language = "cn"
+
+[preprocessor]
+
+[preprocessor.mermaid]
+command = "mdbook-mermaid"
+
+[output]
+
+[output.html]
+additional-js = ["mermaid.min.js", "mermaid-init.js"]

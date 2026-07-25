@@ -5,26 +5,31 @@ async function* readSSEStream(reader) {
     const decoder = new TextDecoder('utf-8');
     let buffer = '';
 
-    while (true) {
-        const { value, done } = await reader.read();
-        if (done) break;
+    try {
+        while (true) {
+            const { value, done } = await reader.read();
+            if (done) break;
 
-        buffer += decoder.decode(value, { stream: true });
-        const parts = buffer.split(/\r?\n\r?\n/);
-        buffer = parts.pop() || '';
+            buffer += decoder.decode(value, { stream: true });
+            const parts = buffer.split(/\r?\n\r?\n/);
+            buffer = parts.pop() || '';
 
-        for (const part of parts) {
-            const eventData = collectEventData(part);
-            if (!eventData) continue;
-            if (eventData === '[DONE]') return;
+            for (const part of parts) {
+                const eventData = collectEventData(part);
+                if (!eventData) continue;
+                if (eventData === '[DONE]') return;
 
+                yield parseEventData(eventData);
+            }
+        }
+
+        const eventData = collectEventData(buffer);
+        if (eventData && eventData !== '[DONE]') {
             yield parseEventData(eventData);
         }
-    }
-
-    const eventData = collectEventData(buffer);
-    if (eventData && eventData !== '[DONE]') {
-        yield parseEventData(eventData);
+    } finally {
+        await reader.cancel().catch(() => {});
+        reader.releaseLock();
     }
 }
 

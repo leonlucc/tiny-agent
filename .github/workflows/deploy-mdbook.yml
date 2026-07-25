@@ -24,6 +24,12 @@ jobs:
         with:
           mdbook-version: 'latest'
 
+      # 安装二进制安装器并下载 mdbook-mermaid
+      - name: Install mdbook-mermaid
+        run: |
+          curl -L --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/cargo-bins/cargo-binstall/main/install-from-binstall-release.sh | bash
+          cargo binstall -y mdbook-mermaid
+
       - name: Build mdBook
         run: mdbook build book/   # 假设 book.toml 位于 book/ 目录
 
