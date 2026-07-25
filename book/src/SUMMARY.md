@@ -5,8 +5,8 @@
 
 # 第一部分：模型基础与全栈通信（基础篇）
 
-- [第一章：Hello LLM（你好，大模型）](./chapter_01.md)
-- [第二章：Streaming Web（Web 流式输出）](./chapter_02.md)
+- [第一章：你好，大模型](./chapter_01.md)
+- [第二章：Web 流式输出](./chapter_02.md)
 
 
 # 附录

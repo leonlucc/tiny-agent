@@ -1,4 +1,4 @@
-# 第一章：Hello LLM（你好，大模型）
+# 第一章：你好，大模型
 
 > **导语**：本章是 Tiny Agent 的起点，不用前端、不做多轮历史，只先跑通“用户输入一句话，大模型回复一句话”的最小闭环。完成本章后，你将掌握大模型的 API 调用方式，为 Agent 开发奠定基础。
 >
@@ -395,4 +395,4 @@ messages=[{"role": "user", "content": message}]
 
 下一章，我们会在这个基础上引入 Web 流式输出，让 Tiny Agent 从一问一答的命令行，走向逐字呈现的浏览器。
 
-[→ 进入第二章：Streaming Web（Web 流式输出）](./chapter_02.md)
+[→ 进入第二章：Web 流式输出](./chapter_02.md)
