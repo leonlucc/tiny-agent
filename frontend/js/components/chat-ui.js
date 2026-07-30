@@ -4,6 +4,7 @@
 
 const dom = {
     chatContainer: null,
+    emptyStateTemplate: null,
     userMessageTemplate: null,
     assistantMessageTemplate: null,
     typingIndicatorTemplate: null,
@@ -19,6 +20,7 @@ let onSend = null;
  */
 function initChatUI({
     chatContainer,
+    emptyStateTemplate,
     messageInput,
     sendButton,
     userMessageTemplate,
@@ -28,6 +30,7 @@ function initChatUI({
     onSend: sendCallback
 }) {
     dom.chatContainer = chatContainer;
+    dom.emptyStateTemplate = emptyStateTemplate;
     dom.messageInput = messageInput;
     dom.sendButton = sendButton;
     dom.userMessageTemplate = userMessageTemplate;
@@ -39,6 +42,35 @@ function initChatUI({
     bindComposerEvents();
     resizeComposer();
     syncComposerState();
+}
+
+/** 清空聊天区，并按消息历史重绘；System 消息不在界面中展示。 */
+function renderMessages(messages = []) {
+    dom.chatContainer.replaceChildren();
+    const visibleMessages = messages.filter(message => message.role !== 'system');
+
+    if (!visibleMessages.length) {
+        showEmptyState();
+        return;
+    }
+
+    const fragment = document.createDocumentFragment();
+    visibleMessages.forEach(message => {
+        const type = message.role === 'user' ? 'user' : 'assistant';
+        fragment.appendChild(
+            createMessageElement(type, message.content, message.reasoning).el
+        );
+    });
+    dom.chatContainer.appendChild(fragment);
+    dom.chatContainer.scrollTop = dom.chatContainer.scrollHeight;
+}
+
+/** 展示无消息状态，可用于空会话或没有选中会话时。 */
+function showEmptyState(message = '请开始您的问题或输入需求') {
+    dom.chatContainer.replaceChildren();
+    const emptyState = dom.emptyStateTemplate.content.firstElementChild.cloneNode(true);
+    emptyState.querySelector('p').textContent = message;
+    dom.chatContainer.appendChild(emptyState);
 }
 
 /** 根据输入内容与忙碌状态同步发送按钮的禁用状态 */
@@ -201,6 +233,8 @@ function addUserMessage(message) {
 
 export {
     initChatUI,
+    renderMessages,
+    showEmptyState,
     addUserMessage,
     clearComposer,
     focusComposer,

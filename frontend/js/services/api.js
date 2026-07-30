@@ -5,6 +5,7 @@
 // 后端接口路径
 const CHAT_STREAM_ENDPOINT = '/api/chat/stream';
 const HEALTH_ENDPOINT = '/api/health';
+const SESSIONS_ENDPOINT = '/api/sessions';
 
 /**
  * 封装所有后端接口调用。
@@ -49,13 +50,14 @@ class APIClient {
 
     /**
      * 发送消息并返回流式响应读取器。
+     * @param {string} sessionId 会话 ID
      * @param {string} message 消息内容
      * @returns {Promise<ReadableStreamDefaultReader<Uint8Array>>} 流式响应读取器
      */
-    async chatStream(message) {
+    async chatStream(sessionId, message) {
         const response = await this.request(CHAT_STREAM_ENDPOINT, {
             method: 'POST',
-            body: JSON.stringify({ message })
+            body: JSON.stringify({ session_id: sessionId, message })
         });
 
         if (!response.body) {
@@ -63,6 +65,47 @@ class APIClient {
         }
 
         return response.body.getReader();
+    }
+
+    async listSessions() {
+        const response = await this.request(SESSIONS_ENDPOINT, {
+            method: 'GET',
+            errorMessage: '获取会话列表失败'
+        });
+        return response.json();
+    }
+
+    async createSession() {
+        const response = await this.request(SESSIONS_ENDPOINT, {
+            method: 'POST',
+            errorMessage: '创建会话失败'
+        });
+        return response.json();
+    }
+
+    async getSession(sessionId) {
+        const response = await this.request(`${SESSIONS_ENDPOINT}/${encodeURIComponent(sessionId)}`, {
+            method: 'GET',
+            errorMessage: '获取会话详情失败'
+        });
+        return response.json();
+    }
+
+    async renameSession(sessionId, name) {
+        const response = await this.request(`${SESSIONS_ENDPOINT}/${encodeURIComponent(sessionId)}`, {
+            method: 'PUT',
+            body: JSON.stringify({ name }),
+            errorMessage: '重命名会话失败'
+        });
+        return response.json();
+    }
+
+    async deleteSession(sessionId) {
+        const response = await this.request(`${SESSIONS_ENDPOINT}/${encodeURIComponent(sessionId)}`, {
+            method: 'DELETE',
+            errorMessage: '删除会话失败'
+        });
+        return response.json();
     }
 
     /**
