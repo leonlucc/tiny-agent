@@ -164,16 +164,10 @@ async function deleteSession(sessionId) {
         appState.sessions = appState.sessions.filter(item => item.session_id !== sessionId);
 
         if (appState.currentSession?.session_id === sessionId) {
-            appState.currentSession = null;
             const nextSession = appState.sessions[0];
+            startNewSession({ keepLoading: true });
             if (nextSession) {
-                const session = await apiClient.getSession(nextSession.session_id);
-                appState.sessions = appState.sessions.map(item =>
-                    item.session_id === session.session_id ? session : item
-                );
-                setCurrentSession(session);
-            } else {
-                startNewSession({ keepLoading: true });
+                await selectSession(nextSession.session_id, { keepLoading: true });
             }
         }
         renderSessionList();

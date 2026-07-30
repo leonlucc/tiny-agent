@@ -46,11 +46,17 @@ class ChatSession:
     created_at: str
     messages: list[Message] = field(default_factory=list)
 
-    def to_dict(self) -> dict[str, object]:
+    def to_summary_dict(self) -> dict[str, str]:
+        """返回会话列表所需的摘要字段。"""
         return {
             "session_id": self.session_id,
             "session_name": self.session_name,
             "created_at": self.created_at,
+        }
+
+    def to_dict(self) -> dict[str, object]:
+        return {
+            **self.to_summary_dict(),
             "messages": [message.to_dict() for message in self.messages],
         }
 
@@ -96,12 +102,17 @@ class SessionService:
     async def delete_session(self, session_id: str) -> bool:
         return self.sessions.pop(session_id, None) is not None
 
-    async def add_message(self, session_id: str, message: Message) -> bool:
+    async def add_messages(
+        self,
+        session_id: str,
+        messages: list[Message],
+    ) -> bool:
+        """一次追加同一轮中的多条消息，并统一裁剪历史。"""
         session = self.sessions.get(session_id)
         if session is None:
             return False
 
-        session.messages.append(message)
+        session.messages.extend(messages)
         if len(session.messages) > DEFAULT_MAX_MESSAGES:
             first_message = session.messages[0]
             if first_message.role == "system" and DEFAULT_MAX_MESSAGES > 1:

@@ -63,6 +63,7 @@ class TestSessionApi:
         assert [item["session_id"] for item in response.json()] == [
             session["session_id"]
         ]
+        assert "messages" not in response.json()[0]
 
     @pytest.mark.asyncio
     async def test_update_session_with_valid_name_returns_renamed_session(
@@ -191,3 +192,33 @@ class TestSessionApi:
         # Assert
         assert response.status_code == 404
         assert response.json()["detail"] == "会话不存在"
+
+    @pytest.mark.asyncio
+    async def test_chat_when_stream_fails_does_not_save_partial_exchange(
+        self, client: AsyncClient, mocker
+    ) -> None:
+        # Arrange
+        session = await _create_session(client)
+        session_id = session["session_id"]
+
+        async def _failing_stream(_messages: list[dict[str, str]]):
+            raise RuntimeError("upstream failed")
+            yield
+
+        mocker.patch(
+            "app.api.endpoint.stream_chat_events",
+            new=_failing_stream,
+        )
+
+        # Act
+        stream_response = await client.post(
+            "/api/chat/stream",
+            json={"session_id": session_id, "message": "不会被保存"},
+        )
+        history_response = await client.get(f"/api/sessions/{session_id}")
+
+        # Assert
+        assert stream_response.status_code == 200
+        assert "模型服务暂时不可用" in stream_response.text
+        roles = [message["role"] for message in history_response.json()["messages"]]
+        assert roles == ["system"]

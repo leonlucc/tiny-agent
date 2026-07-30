@@ -4,11 +4,15 @@
 async function* readSSEStream(reader) {
     const decoder = new TextDecoder('utf-8');
     let buffer = '';
+    let completed = false;
 
     try {
-        while (true) {
+        while (!completed) {
             const { value, done } = await reader.read();
-            if (done) break;
+            if (done) {
+                buffer += decoder.decode();
+                break;
+            }
 
             buffer += decoder.decode(value, { stream: true });
             const parts = buffer.split(/\r?\n\r?\n/);
@@ -17,15 +21,26 @@ async function* readSSEStream(reader) {
             for (const part of parts) {
                 const eventData = collectEventData(part);
                 if (!eventData) continue;
-                if (eventData === '[DONE]') return;
+                if (eventData === '[DONE]') {
+                    completed = true;
+                    break;
+                }
 
                 yield parseEventData(eventData);
             }
         }
 
-        const eventData = collectEventData(buffer);
-        if (eventData && eventData !== '[DONE]') {
-            yield parseEventData(eventData);
+        if (!completed) {
+            const eventData = collectEventData(buffer);
+            if (eventData === '[DONE]') {
+                completed = true;
+            } else if (eventData) {
+                yield parseEventData(eventData);
+            }
+        }
+
+        if (!completed) {
+            throw new Error('SSE 流意外中断：未收到完成标记');
         }
     } finally {
         await reader.cancel().catch(() => {});

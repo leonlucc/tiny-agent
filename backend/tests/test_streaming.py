@@ -92,3 +92,18 @@ class TestStreamSse:
         assert "secret upstream detail" not in output
         assert "模型服务暂时不可用" in output
         assert chunks.count("data: [DONE]\n\n") == 1
+
+    @pytest.mark.asyncio
+    async def test_stream_without_response_returns_error(self) -> None:
+        # Arrange
+        async def _events():
+            if False:
+                yield
+
+        # Act
+        chunks = await _collect(_stream_sse(_events()))
+
+        # Assert
+        output = "".join(chunks)
+        assert "模型未返回有效回复" in output
+        assert chunks.count("data: [DONE]\n\n") == 1

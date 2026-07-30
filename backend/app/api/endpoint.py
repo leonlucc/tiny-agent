@@ -37,10 +37,10 @@ async def health() -> dict[str, str]:
 
 
 @router.get("/sessions")
-async def list_sessions() -> list[dict[str, object]]:
+async def list_sessions() -> list[dict[str, str]]:
     """获取会话列表。"""
     sessions = await session_service.list_sessions()
-    return [session.to_dict() for session in sessions]
+    return [session.to_summary_dict() for session in sessions]
 
 
 @router.post("/sessions", status_code=201)
@@ -84,7 +84,7 @@ async def delete_session(session_id: str) -> dict[str, bool]:
 
 @router.post("/chat/stream")
 async def chat_stream(request: ChatRequest) -> StreamingResponse:
-    """把用户消息加入历史，并以 SSE 形式返回和保存 Assistant 回复。"""
+    """流式返回模型回复，并在成功结束后保存完整的一轮对话。"""
     message = request.message.strip()
     if not message:
         raise HTTPException(status_code=400, detail="message 不能为空")
@@ -93,16 +93,15 @@ async def chat_stream(request: ChatRequest) -> StreamingResponse:
     if session is None:
         raise HTTPException(status_code=404, detail="会话不存在")
 
-    await session_service.add_message(
-        request.session_id,
-        Message(role="user", content=message),
-    )
+    user_message = Message(role="user", content=message)
     messages = [item.to_llm_dict() for item in session.messages]
+    messages.append(user_message.to_llm_dict())
 
     return StreamingResponse(
         _stream_sse(
             stream_chat_events(messages),
             session_id=request.session_id,
+            user_message=user_message,
         ),
         media_type="text/event-stream",
         headers={
@@ -116,8 +115,9 @@ async def chat_stream(request: ChatRequest) -> StreamingResponse:
 async def _stream_sse(
     events: AsyncIterator[dict[str, str]],
     session_id: str | None = None,
+    user_message: Message | None = None,
 ) -> AsyncIterator[str]:
-    """编码 SSE；流正常结束后，把片段合并为一条 Assistant 历史消息。"""
+    """编码 SSE；流正常结束后，成对保存 User 和 Assistant 消息。"""
     content_parts: list[str] = []
     reasoning_parts: list[str] = []
     try:
@@ -132,14 +132,21 @@ async def _stream_sse(
         error = {"type": "error", "message": "模型服务暂时不可用，请稍后重试。"}
         yield f"data: {json.dumps(error, ensure_ascii=False)}\n\n"
     else:
-        if session_id is not None:
-            await session_service.add_message(
+        has_response = bool(content_parts or reasoning_parts)
+        if not has_response:
+            error = {"type": "error", "message": "模型未返回有效回复，请稍后重试。"}
+            yield f"data: {json.dumps(error, ensure_ascii=False)}\n\n"
+        elif session_id is not None and user_message is not None:
+            await session_service.add_messages(
                 session_id,
-                Message(
-                    role="assistant",
-                    content="".join(content_parts),
-                    reasoning="".join(reasoning_parts) or None,
-                ),
+                [
+                    user_message,
+                    Message(
+                        role="assistant",
+                        content="".join(content_parts),
+                        reasoning="".join(reasoning_parts) or None,
+                    ),
+                ],
             )
 
     yield "data: [DONE]\n\n"
