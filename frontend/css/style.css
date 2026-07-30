@@ -42,6 +42,7 @@
     --border-radius: 8px;
     --transition: all 0.3s ease;
     --content-width: 80%;
+    --sidebar-control-height: 50px;
 }
 
 /* ========== 全局基础样式 ========== */
@@ -225,6 +226,7 @@ body {
 
 .new-session-button {
     width: 100%;
+    height: var(--sidebar-control-height);
     margin-top: 20px;
     padding: 12px 16px;
     border: none;
@@ -259,7 +261,7 @@ body {
 }
 
 .session-history h2 {
-    padding: 14px 20px 4px;
+    padding: 10px 20px 4px;
     color: var(--text-muted);
     font-size: 0.8rem;
     font-weight: 600;
@@ -281,6 +283,7 @@ body {
 
 .session-item {
     position: relative;
+    height: var(--sidebar-control-height);
     margin-bottom: 8px;
     padding: 0;
     border: 1px solid var(--bg-hover);
@@ -313,6 +316,7 @@ body {
 
 .session-select-button {
     min-width: 0;
+    height: 100%;
     padding: 6px 4px 6px 15px;
     flex: 1;
     display: flex;
@@ -330,21 +334,13 @@ body {
 
 .session-details {
     min-width: 0;
-    display: flex;
     flex: 1;
-    flex-direction: column;
 }
 
 .session-name {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-}
-
-.session-date {
-    margin-top: 2px;
-    color: var(--text-muted);
-    font-size: 0.7rem;
 }
 
 .session-more-button {

@@ -40,7 +40,7 @@ async function init() {
     initChatUI({ ...refs, onSend: sendMessage });
     initSidebar({
         ...refs,
-        onCreate: createSession,
+        onCreate: startNewSession,
         onSelect: selectSession,
         onRename: renameSession,
         onDelete: deleteSession
@@ -88,12 +88,7 @@ async function loadSessions() {
     try {
         appState.sessions = await apiClient.listSessions();
         renderSessionList();
-
-        if (appState.sessions.length) {
-            await selectSession(appState.sessions[0].session_id, { keepLoading: true });
-        } else {
-            await createSession({ keepLoading: true });
-        }
+        startNewSession({ keepLoading: true });
     } catch (error) {
         showEmptyState('会话加载失败，请检查后端服务后刷新页面');
         showOperationError(error);
@@ -102,26 +97,14 @@ async function loadSessions() {
     }
 }
 
-async function createSession(options = {}) {
+/** 进入本地新会话草稿；首次发送消息时才调用后端创建接口。 */
+function startNewSession(options = {}) {
     if (!canOperateSession(options.keepLoading)) return;
-    if (!options.keepLoading) setSessionLoading(true);
-
-    try {
-        const session = await apiClient.createSession();
-        appState.sessions = [
-            session,
-            ...appState.sessions.filter(item => item.session_id !== session.session_id)
-        ];
-        setCurrentSession(session);
-        focusComposer();
-    } catch (error) {
-        if (!appState.currentSession) {
-            showEmptyState('创建会话失败，请稍后重试');
-        }
-        showOperationError(error);
-    } finally {
-        if (!options.keepLoading) setSessionLoading(false);
-    }
+    appState.currentSession = null;
+    renderSessionList();
+    updateCurrentTitle();
+    renderMessages([]);
+    focusComposer();
 }
 
 async function selectSession(sessionId, options = {}) {
@@ -190,8 +173,7 @@ async function deleteSession(sessionId) {
                 );
                 setCurrentSession(session);
             } else {
-                updateCurrentTitle();
-                showEmptyState('点击左侧“新建会话”开始对话');
+                startNewSession({ keepLoading: true });
             }
         }
         renderSessionList();
@@ -215,7 +197,7 @@ function renderSessionList() {
 
 function updateCurrentTitle() {
     appDOM.currentChatTitle.textContent =
-        appState.currentSession?.session_name || '请选择会话';
+        appState.currentSession?.session_name || '新会话';
 }
 
 function canOperateSession(allowLoading = false) {
@@ -230,7 +212,20 @@ function setSessionLoading(isLoading) {
 function syncInteractionState() {
     const isBusy = appState.isTyping || appState.isSessionLoading;
     setSidebarBusy(isBusy);
-    setComposerBusy(isBusy || !appState.currentSession);
+    setComposerBusy(isBusy);
+}
+
+/** 确保首条消息发送前已有后端会话，并把它加入历史列表。 */
+async function ensureCurrentSession() {
+    if (appState.currentSession) return appState.currentSession;
+
+    const session = await apiClient.createSession();
+    appState.sessions = [
+        session,
+        ...appState.sessions.filter(item => item.session_id !== session.session_id)
+    ];
+    setCurrentSession(session);
+    return session;
 }
 
 function showOperationError(error) {
@@ -249,8 +244,20 @@ async function checkConnection() {
  * @param {string} content chat-ui 回调传入的非空消息内容
  */
 async function sendMessage(content) {
-    const session = appState.currentSession;
-    if (!content || appState.isTyping || appState.isSessionLoading || !session) return;
+    if (!content || appState.isTyping || appState.isSessionLoading) return;
+
+    let session = appState.currentSession;
+    if (!session) {
+        setSessionLoading(true);
+        try {
+            session = await ensureCurrentSession();
+        } catch (error) {
+            showOperationError(error);
+            return;
+        } finally {
+            setSessionLoading(false);
+        }
+    }
 
     addUserMessage(content);
     clearComposer();

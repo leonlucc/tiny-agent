@@ -129,11 +129,7 @@ function renderSessions(sessions, currentSessionId) {
         sessionName.className = 'session-name';
         sessionName.textContent = session.session_name;
 
-        const sessionDate = document.createElement('span');
-        sessionDate.className = 'session-date';
-        sessionDate.textContent = formatSessionDate(session.created_at);
-
-        sessionDetails.append(sessionName, sessionDate);
+        sessionDetails.appendChild(sessionName);
         selectButton.append(icon, sessionDetails);
 
         const moreButton = document.createElement('button');
@@ -153,12 +149,6 @@ function renderSessions(sessions, currentSessionId) {
     });
     dom.sessionList.appendChild(fragment);
     positionOpenSessionMenu();
-}
-
-/** 将后端 YYYYMMDDHHmmSS 日期格式化为 MM/DD。 */
-function formatSessionDate(value) {
-    if (!value || value.length !== 14) return '';
-    return `${value.slice(4, 6)}/${value.slice(6, 8)}`;
 }
 
 function createSessionMenu() {
