@@ -1,0 +1,74 @@
+/**
+ * 全局基础样式
+ * 负责主题变量、样式重置和页面基础布局
+ * 
+ * 设计原则：
+ * - 使用 CSS 变量管理全局样式，便于主题切换和统一修改
+ * - 只放置跨组件共享的基础规则
+ */
+
+/* ========== CSS 变量定义 ========== */
+
+:root {
+    /* ========== 基础主题色 ========== */
+    --primary-color: #4361ee;
+    --secondary-color: #3a0ca3;
+    --dark-color: #212529;
+    --success-color: #4caf50;
+    --danger-color: #f44336;
+
+    /* ========== 文本颜色 ========== */
+    --text-primary: #2d3748;
+    --text-secondary: #4a5568;
+    --text-muted: #718096;
+    --text-disabled: #999;
+
+    /* ========== 背景颜色 ========== */
+    --bg-sidebar: #f0f2f5;
+    --bg-main: #f1f5f9;
+    --bg-card: #f9fafb;
+    --bg-hover: #edf2f7;
+    --bg-hover-light: #f0f4ff;
+    --bg-active: #e8f0fe;
+    --bg-thinking: #f8f9fa;
+
+    /* ========== 边框颜色 ========== */
+    --border-color: #e0e0e0;
+    --border-light: #e2e8f0;
+    --border-hover: #cbd5e0;
+    --border-thinking: #e9ecef;
+
+    /* ========== 布局变量 ========== */
+    --border-radius: 8px;
+    --transition: all 0.3s ease;
+    --content-width: 80%;
+    --sidebar-control-height: 50px;
+}
+
+/* ========== 全局基础样式 ========== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
+    color: var(--dark-color);
+    line-height: 1.6;
+    height: 100vh;
+    height: 100dvh;
+    display: flex;
+    overflow: hidden;
+}
+
+
+/* ========== 移动端响应式 ========== */
+
+@media (max-width: 768px) {
+    body {
+        flex-direction: row;
+    }
+}

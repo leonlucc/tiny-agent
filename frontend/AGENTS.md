@@ -6,7 +6,9 @@
 ```
 index.html
 css/
-├── style.css
+├── base.css              # 全局变量与基础样式
+├── sidebar.css           # 对应 components/sidebar.js
+└── chat.css              # 对应 components/chat-ui.js
 js/
 ├── app.js                 # 入口、状态中心、统一调度
 ├── components/
