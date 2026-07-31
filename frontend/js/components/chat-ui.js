@@ -2,6 +2,8 @@
  * 聊天区组件：只负责根据 app.js 的指令更新界面，不持有业务状态。
  */
 
+import { setMarkdownContent } from './markdown.js';
+
 const dom = {
     chatContainer: null,
     emptyStateTemplate: null,
@@ -154,11 +156,16 @@ function appendMessage(element) {
 }
 
 /** 创建消息元素（用户或助理），统一使用 <template> */
-function createMessageElement(type, content, reasoning) {
+function createMessageElement(type, content, reasoning, options = {}) {
     const template = type === 'user' ? dom.userMessageTemplate : dom.assistantMessageTemplate;
     const el = template.content.firstElementChild.cloneNode(true);
     const container = el.querySelector('.message-content');
-    container.textContent = content || '';
+    const shouldRenderMarkdown = options.renderMarkdown ?? (type === 'assistant');
+    if (shouldRenderMarkdown) {
+        setMarkdownContent(container, content);
+    } else {
+        container.textContent = content || '';
+    }
     if (type === 'assistant' && reasoning) {
         const section = el.querySelector('.thinking-section');
         section.hidden = false;
@@ -180,7 +187,7 @@ function createTypingIndicator() {
  */
 function createAssistantResponseView() {
     const typingIndicator = createTypingIndicator();
-    const { el } = createMessageElement('assistant');
+    const { el, container } = createMessageElement('assistant');
     el.hidden = true;
     appendMessage(el);
     let shown = false;
@@ -201,14 +208,14 @@ function createAssistantResponseView() {
                 el.querySelector('.thinking-content').textContent = reasoning;
             }
             if (content !== undefined) {
-                el.querySelector('.message-content').textContent = content;
+                setMarkdownContent(container, content);
             }
             scheduleScrollToBottom();
         },
         complete(content) {
             show();
             if (content) {
-                el.querySelector('.message-content').textContent = content;
+                setMarkdownContent(container, content);
             }
             scheduleScrollToBottom();
         },
@@ -221,7 +228,9 @@ function createAssistantResponseView() {
 
 /** 在聊天区显示 assistant 风格的错误消息 */
 function showAssistantError(message) {
-    appendMessage(createMessageElement('assistant', message).el);
+    appendMessage(
+        createMessageElement('assistant', message, null, { renderMarkdown: false }).el
+    );
 }
 
 /** 追加用户消息到聊天区（自动移除空状态） */
