@@ -550,6 +550,12 @@ async def _stream_sse(
 
 ### 4.10 启动与验证
 
+先切换到本章源码：
+
+```bash
+git checkout v0.2
+```
+
 安装新增依赖并配置环境变量：
 
 ```bash
@@ -580,8 +586,8 @@ http://127.0.0.1:8000
 
 | 变化位置 | 核心变化 | 解决的问题 |
 | --- | --- | --- |
-| `backend/app/main.py`、`config.py` | CLI 入口改为 FastAPI 应用；集中配置；托管前端 | 让 LLM 能力通过浏览器访问 |
-| `backend/app/service/llm_service.py` | 同步完整调用改为 `AsyncOpenAI` 流式调用；映射业务事件 | 得到可逐段转发的模型增量 |
+| `backend/app/main.py`、<br>`config.py` | CLI 入口改为 FastAPI 应用；集中配置；托管前端 | 让 LLM 能力通过浏览器访问 |
+| `backend/app/service/`<br>`llm_service.py` | 同步完整调用改为 `AsyncOpenAI` 流式调用；映射业务事件 | 得到可逐段转发的模型增量 |
 | `backend/app/api/endpoint.py` | 新增健康检查、POST 流式接口和 SSE 编码 | 建立浏览器与模型之间的实时 HTTP 通道 |
 | `frontend/` | 新增页面、API 客户端、SSE 解析器和 UI 组件 | 解析并实时呈现流式回复 |
 | `backend/requirements.txt` | 新增 FastAPI 与 Uvicorn | 提供 ASGI Web 服务运行环境 |
@@ -602,7 +608,7 @@ git diff --stat v0.1..v0.2
 其中既包含 README、快速开始文档等配套更新，也包含本章的核心代码。若只关注运行实现，可以缩小比较范围：
 
 ```bash
-git diff --stat v0.1..v0.2 -- backend/app backend/requirements.txt frontend
+git diff --stat v0.1..v0.2 -- backend/app frontend
 ```
 
 ---
@@ -674,4 +680,4 @@ WebSocket 更适合双方都要随时主动推送的长连接场景，例如语�
 
 下一章，我们将在这条流式链路上加入 Chat History，让 Tiny Agent 从多次独立问答走向真正的多轮对话。
 
-[→ 进入第三章 多轮对话](./chapter03.md)
+[→ 进入第三章 多轮对话](./chapter_03.md)
