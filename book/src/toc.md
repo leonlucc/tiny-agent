@@ -1,22 +1,101 @@
 # 目录
 
-### 前言
+#### 前言
 - [前言](preface.md)
 - [导读](introduction.md)
-### 基础篇——模型基础与全栈通信
+#### 基础篇——模型基础与全栈通信
 - [第一章：你好，大模型](./chapter_01.md)
+  - [1. 让 Agent 第一次开口](./chapter_01.md#1-让-agent-第一次开口)
+  - [2. 整体方案](./chapter_01.md#2-整体方案)
+  - [3. 核心概念](./chapter_01.md#3-核心概念)
+    - [3.1 OpenAI 兼容 SDK](./chapter_01.md#31-openai-兼容-sdk)
+    - [3.2 环境变量](./chapter_01.md#32-环境变量)
+    - [3.3 大模型消息](./chapter_01.md#33-大模型消息)
+    - [3.4 单轮调用](./chapter_01.md#34-单轮调用)
+  - [4. 工程实现](./chapter_01.md#4-工程实现)
+    - [4.1 目录结构](./chapter_01.md#41-目录结构)
+    - [4.2 新增依赖](./chapter_01.md#42-新增依赖)
+    - [4.3 环境变量管理](./chapter_01.md#43-环境变量管理)
+    - [4.4 运行入口](./chapter_01.md#44-运行入口)
+    - [4.5 LLM 调用逻辑](./chapter_01.md#45-llm-调用逻辑)
+    - [4.6 运行验证](./chapter_01.md#46-运行验证)
+  - [5. Git Diff 导读](./chapter_01.md#5-git-diff-导读)
+  - [6. 架构思考](./chapter_01.md#6-架构思考)
+    - [6.1 为什么先做 CLI，而不是 Web UI？](./chapter_01.md#61-为什么先做-cli而不是-web-ui)
+    - [6.2 为什么是 OpenAI SDK，而不是 LiteLLM 等聚合库？](./chapter_01.md#62-为什么是-openai-sdk而不是-litellm-等聚合库)
+    - [6.3 为什么只做单轮，不做聊天历史？](./chapter_01.md#63-为什么只做单轮不做聊天历史)
+    - [6.4 为什么环境变量使用通用命名？](./chapter_01.md#64-为什么环境变量使用通用命名)
+    - [6.5 为什么第一步就要引入 venv 虚拟环境？](./chapter_01.md#65-为什么第一步就要引入-venv-虚拟环境)
+    - [6.6 为什么通过 python-dotenv 管理环境变量？](./chapter_01.md#66-为什么通过-python-dotenv-管理环境变量)
+    - [6.7 为什么错误处理非常简单？](./chapter_01.md#67-为什么错误处理非常简单)
+  - [7. 本章小结](./chapter_01.md#7-本章小结)
 - [第二章：Web 流式输出](./chapter_02.md)
+  - [1. 让回答流动起来](./chapter_02.md#1-让回答流动起来)
+  - [2. 整体方案](./chapter_02.md#2-整体方案)
+  - [3. 核心概念](./chapter_02.md#3-核心概念)
+    - [3.1 完整响应与增量响应](./chapter_02.md#31-完整响应与增量响应)
+    - [3.2 Python 异步生成器：边生产，边交付](./chapter_02.md#32-python-异步生成器边生产边交付)
+    - [3.3 SSE：建立单向事件流](./chapter_02.md#33-sse建立单向事件流)
+    - [3.4 使用 fetch() 读取流式响应](./chapter_02.md#34-使用-fetch-读取流式响应)
+    - [3.5 网络分块不等于 SSE 事件](./chapter_02.md#35-网络分块不等于-sse-事件)
+  - [4. 工程实现](./chapter_02.md#4-工程实现)
+    - [4.1 目录结构](./chapter_02.md#41-目录结构)
+    - [4.2 增加 Web 运行依赖](./chapter_02.md#42-增加-web-运行依赖)
+    - [4.3 config.py：集中配置与路径](./chapter_02.md#43-configpy集中配置与路径)
+    - [4.4 main.py：组装应用与管理生命周期](./chapter_02.md#44-mainpy组装应用与管理生命周期)
+    - [4.5 llm_service.py：隔离模型协议](./chapter_02.md#45-llm_servicepy隔离模型协议)
+    - [4.6 endpoint.py：从业务事件到 SSE](./chapter_02.md#46-endpointpy从业务事件到-sse)
+    - [4.7 index.html 与 style.css：最小聊天界面](./chapter_02.md#47-indexhtml-与-stylecss最小聊天界面)
+    - [4.8 api.js 与 sse.js：分离 HTTP 和流协议](./chapter_02.md#48-apijs-与-ssejs分离-http-和流协议)
+    - [4.9 app.js 与 chat-ui.js：调度和渲染](./chapter_02.md#49-appjs-与-chat-uijs调度和渲染)
+    - [4.10 启动与验证](./chapter_02.md#410-启动与验证)
+  - [5. Git Diff 导读](./chapter_02.md#5-git-diff-导读)
+  - [6. 架构思考](./chapter_02.md#6-架构思考)
+    - [6.1 为什么后端选择 FastAPI，而不是其他 Web 框架？](./chapter_02.md#61-为什么后端选择-fastapi而不是其他-web-框架)
+    - [6.2 为什么选择 SSE，而不是 WebSocket？](./chapter_02.md#62-为什么选择-sse而不是-websocket)
+    - [6.3 为什么后端要定义业务事件，而不原样转发 LLM 的 chunk？](./chapter_02.md#63-为什么后端要定义业务事件而不原样转发-llm-的-chunk)
+    - [6.4 为什么前端使用 fetch()，而不是 EventSource？](./chapter_02.md#64-为什么前端使用-fetch而不是-eventsource)
+    - [6.5 页面显示多条消息，为什么仍不算多轮对话？](./chapter_02.md#65-页面显示多条消息为什么仍不算多轮对话)
+    - [6.6 当前版本还缺少什么？](./chapter_02.md#66-当前版本还缺少什么)
+  - [7. 本章小结](./chapter_02.md#7-本章小结)
 - [第三章：多轮对话](./chapter_03.md)
+  - [1. 让模型记住刚才的对话](./chapter_03.md#1-让模型记住刚才的对话)
+  - [2. 整体方案](./chapter_03.md#2-整体方案)
+  - [3. 核心概念](./chapter_03.md#3-核心概念)
+    - [3.1 Message Protocol（消息协议）：一条消息不只有文本](./chapter_03.md#31-message-protocol消息协议一条消息不只有文本)
+    - [3.2 Chat History（对话历史）：有序消息序列](./chapter_03.md#32-chat-history对话历史有序消息序列)
+    - [3.3 多轮对话不是模型"保存了状态"](./chapter_03.md#33-多轮对话不是模型保存了状态)
+    - [3.4 流式回答何时写入历史](./chapter_03.md#34-流式回答何时写入历史)
+    - [3.5 历史裁剪：保留 System，限制总量](./chapter_03.md#35-历史裁剪保留-system限制总量)
+  - [4. 工程实现](./chapter_03.md#4-工程实现)
+    - [4.1 session_service.py：对话历史的唯一管理入口](./chapter_03.md#41-session_servicepy对话历史的唯一管理入口)
+    - [4.2 endpoint.py：会话 REST API](./chapter_03.md#42-endpointpy会话-rest-api)
+    - [4.3 chat_stream()：从当前输入组装完整历史](./chapter_03.md#43-chat_stream从当前输入组装完整历史)
+    - [4.4 llm_service.py：从单条文本改为完整消息列表](./chapter_03.md#44-llm_servicepy从单条文本改为完整消息列表)
+    - [4.5 _stream_sse()：转发增量并提交完整一轮](./chapter_03.md#45-_stream_sse转发增量并提交完整一轮)
+    - [4.6 api.js：前端接口与后端会话一一对应](./chapter_03.md#46-apijs前端接口与后端会话一一对应)
+    - [4.7 app.js：集中管理当前会话状态](./chapter_03.md#47-appjs集中管理当前会话状态)
+    - [4.8 chat-ui.js 与 sidebar.js：消息恢复和会话操作](./chapter_03.md#48-chat-uijs-与-sidebarjs消息恢复和会话操作)
+    - [4.9 启动与验证](./chapter_03.md#49-启动与验证)
+  - [5. Git Diff 导读](./chapter_03.md#5-git-diff-导读)
+  - [6. 架构思考](./chapter_03.md#6-架构思考)
+    - [6.1 为什么历史由后端管理，而不是每次由前端完整上传？](./chapter_03.md#61-为什么历史由后端管理而不是每次由前端完整上传)
+    - [6.2 为什么成功后才保存，而不是发送前先保存 User 消息？](./chapter_03.md#62-为什么成功后才保存而不是发送前先保存-user-消息)
+    - [6.3 为什么前端生成期间禁止切换会话？](./chapter_03.md#63-为什么前端生成期间禁止切换会话)
+    - [6.4 当前内存会话方案有哪些限制？](./chapter_03.md#64-当前内存会话方案有哪些限制)
+    - [6.5 按消息条数裁剪历史为什么还不够？](./chapter_03.md#65-按消息条数裁剪历史为什么还不够)
+    - [6.6 Message Protocol 与 Prompt（提示词）是什么关系？](./chapter_03.md#66-message-protocol-与-prompt提示词是什么关系)
+  - [7. 本章小结](./chapter_03.md#7-本章小结)
 - [第四章：结构化输出](./chapter_04.md)
-### 链接篇——外部知识与规划行动
+#### 链接篇——外部知识与规划行动
 - [第五章：基础检索增强生成](./chapter_05.md)
 - [第六章：工具调用](./chapter_06.md)
 - [第七章：智能体循环](./chapter_06.md)
-### 拓展篇——能力拓展与流程编排
-
-### 强化篇——工程强化与生产就绪
-
-### 前沿篇——多模交互与群智协同
-
-### 附录
+#### 拓展篇——能力拓展与流程编排
+待补充
+#### 强化篇——工程强化与生产就绪
+待补充
+#### 前沿篇——多模交互与群智协同
+待补充
+#### 附录
 [附录1：渐进式演进路线图](./roadmap.md)
