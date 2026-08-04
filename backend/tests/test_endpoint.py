@@ -3,18 +3,21 @@
 from __future__ import annotations
 
 import json
+import logging
 from collections.abc import AsyncIterator
+from types import SimpleNamespace
 
 import pytest
-import pytest_asyncio
 from fastapi import FastAPI
 from httpx import ASGITransport, AsyncClient
 
-from app.api.endpoint import router
+from app.api.endpoint import _stream_sse, router
 from app.services.session_service import session_service
 
+pytestmark = pytest.mark.asyncio
 
-@pytest_asyncio.fixture
+
+@pytest.fixture
 async def client() -> AsyncIterator[AsyncClient]:
     session_service.sessions.clear()
     session_service._counter = 0
@@ -33,6 +36,21 @@ async def _create_session(client: AsyncClient) -> dict[str, object]:
     return response.json()
 
 
+async def _collect(iterator):
+    return [item async for item in iterator]
+
+
+class TestHealthApi:
+    @pytest.mark.asyncio
+    async def test_health_endpoint_returns_ok(self, client: AsyncClient) -> None:
+        # Act
+        response = await client.get("/api/health")
+
+        # Assert
+        assert response.status_code == 200
+        assert response.json() == {"status": "ok"}
+
+
 class TestSessionApi:
     @pytest.mark.asyncio
     async def test_create_session_returns_system_message(
@@ -47,6 +65,66 @@ class TestSessionApi:
         # Assert
         assert response.status_code == 201
         assert response.json()["messages"][0]["role"] == "system"
+
+    @pytest.mark.asyncio
+    async def test_get_existing_session_returns_full_history(
+        self, client: AsyncClient
+    ) -> None:
+        # Arrange
+        session = await _create_session(client)
+        session_id = session["session_id"]
+
+        # Act
+        response = await client.get(f"/api/sessions/{session_id}")
+
+        # Assert
+        assert response.status_code == 200
+        assert response.json()["session_id"] == session_id
+        assert "messages" in response.json()
+        assert len(response.json()["messages"]) >= 1
+
+    @pytest.mark.asyncio
+    async def test_get_non_existent_session_returns_404(
+        self, client: AsyncClient
+    ) -> None:
+        # Act
+        response = await client.get("/api/sessions/non-existent-id")
+
+        # Assert
+        assert response.status_code == 404
+        assert response.json()["detail"] == "会话不存在"
+
+    @pytest.mark.asyncio
+    async def test_update_non_existent_session_returns_404(
+        self, client: AsyncClient
+    ) -> None:
+        # Act
+        response = await client.put(
+            "/api/sessions/non-existent-id",
+            json={"name": "Test"},
+        )
+
+        # Assert
+        assert response.status_code == 404
+        assert response.json()["detail"] == "会话不存在"
+
+    @pytest.mark.asyncio
+    async def test_chat_with_empty_message_returns_bad_request(
+        self, client: AsyncClient
+    ) -> None:
+        # Arrange
+        session = await _create_session(client)
+        session_id = session["session_id"]
+
+        # Act
+        response = await client.post(
+            "/api/chat/stream",
+            json={"session_id": session_id, "message": "   "},
+        )
+
+        # Assert
+        assert response.status_code == 400
+        assert response.json()["detail"] == "message 不能为空"
 
     @pytest.mark.asyncio
     async def test_list_sessions_returns_created_session(
@@ -222,3 +300,57 @@ class TestSessionApi:
         assert "模型服务暂时不可用" in stream_response.text
         roles = [message["role"] for message in history_response.json()["messages"]]
         assert roles == ["system"]
+
+
+class TestStreamSse:
+    @pytest.mark.asyncio
+    async def test_stream_with_events_encodes_data_and_sends_done_once(
+        self,
+    ) -> None:
+        # Arrange
+        async def _events():
+            yield {"type": "content", "chunk": "你好"}
+
+        # Act
+        chunks = await _collect(_stream_sse(_events()))
+
+        # Assert
+        assert json.loads(chunks[0][6:]) == {
+            "type": "content",
+            "chunk": "你好",
+        }
+        assert chunks.count("data: [DONE]\n\n") == 1
+
+    @pytest.mark.asyncio
+    async def test_stream_with_internal_error_hides_detail_and_sends_done(
+        self, caplog
+    ) -> None:
+        # Arrange
+        async def _events():
+            yield {"type": "content", "chunk": "部分内容"}
+            raise RuntimeError("secret upstream detail")
+
+        # Act
+        with caplog.at_level(logging.ERROR, logger="app.api.endpoint"):
+            chunks = await _collect(_stream_sse(_events()))
+
+        # Assert
+        output = "".join(chunks)
+        assert "secret upstream detail" not in output
+        assert "模型服务暂时不可用" in output
+        assert chunks.count("data: [DONE]\n\n") == 1
+
+    @pytest.mark.asyncio
+    async def test_stream_without_response_returns_error(self) -> None:
+        # Arrange
+        async def _events():
+            if False:
+                yield
+
+        # Act
+        chunks = await _collect(_stream_sse(_events()))
+
+        # Assert
+        output = "".join(chunks)
+        assert "模型未返回有效回复" in output
+        assert chunks.count("data: [DONE]\n\n") == 1

@@ -1,0 +1,11 @@
+[flake8]
+# 忽略的错误代码
+ignore = E226, E302, E41, W504
+# 每行最大字符数
+max-line-length = 120
+# 排除的目录或文件
+exclude = .git, __pycache__, build, dist, .venv, data, logs, tests, scripts, examples
+# 检查的复杂度限制
+max-complexity = 20
+# 显示错误代码
+format = default

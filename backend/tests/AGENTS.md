@@ -34,3 +34,9 @@ def test_calculate_discount_for_vip_user():
     # Assert
     assert final_price == 850
 ```
+
+### 5. 测试覆盖率要求
+
+- **最低行覆盖率**：90%
+- **分支覆盖率**：必须开启并纳入质量门禁。
+- 覆盖率报告使用 `pytest --cov=app --cov-branch --cov-report=term --cov-report=term-missing`。
