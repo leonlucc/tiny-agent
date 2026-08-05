@@ -52,7 +52,9 @@ async function init() {
     await loadSessions();
 }
 
-document.addEventListener('DOMContentLoaded', init);
+if (typeof document !== 'undefined') {
+    document.addEventListener('DOMContentLoaded', init);
+}
 
 /** 统一收集 DOM，再注入 UI 组件，避免各模块重复查询全局文档。 */
 function collectDOMElements() {
@@ -99,7 +101,7 @@ async function loadSessions() {
 
 /** 进入本地新会话草稿；首次发送消息时才调用后端创建接口。 */
 function startNewSession(options = {}) {
-    if (!canOperateSession(options.keepLoading)) return;
+    if (!canOperateSession(appState, options.keepLoading)) return;
     appState.currentSession = null;
     renderSessionList();
     updateCurrentTitle();
@@ -108,7 +110,7 @@ function startNewSession(options = {}) {
 }
 
 async function selectSession(sessionId, options = {}) {
-    if (!canOperateSession(options.keepLoading)) return;
+    if (!canOperateSession(appState, options.keepLoading)) return;
     if (appState.currentSession?.session_id === sessionId && !options.keepLoading) {
         return;
     }
@@ -117,7 +119,7 @@ async function selectSession(sessionId, options = {}) {
     try {
         const session = await apiClient.getSession(sessionId);
         appState.sessions = appState.sessions.map(item =>
-            item.session_id === sessionId ? session : item
+            item.session_id === session.session_id ? session : item
         );
         setCurrentSession(session);
     } catch (error) {
@@ -135,13 +137,13 @@ async function selectSession(sessionId, options = {}) {
 }
 
 async function renameSession(sessionId, name) {
-    if (!canOperateSession()) return;
+    if (!canOperateSession(appState)) return;
     setSessionLoading(true);
 
     try {
         const updatedSession = await apiClient.renameSession(sessionId, name);
         appState.sessions = appState.sessions.map(item =>
-            item.session_id === sessionId ? updatedSession : item
+            item.session_id === updatedSession.session_id ? updatedSession : item
         );
         if (appState.currentSession?.session_id === sessionId) {
             appState.currentSession = updatedSession;
@@ -156,7 +158,7 @@ async function renameSession(sessionId, name) {
 }
 
 async function deleteSession(sessionId) {
-    if (!canOperateSession()) return;
+    if (!canOperateSession(appState)) return;
     setSessionLoading(true);
 
     try {
@@ -194,8 +196,8 @@ function updateCurrentTitle() {
         appState.currentSession?.session_name || '新会话';
 }
 
-function canOperateSession(allowLoading = false) {
-    return !appState.isTyping && (allowLoading || !appState.isSessionLoading);
+function canOperateSession(state, allowLoading = false) {
+    return !state.isTyping && (allowLoading || !state.isSessionLoading);
 }
 
 function setSessionLoading(isLoading) {
@@ -308,3 +310,8 @@ async function sendMessage(content) {
         focusComposer();
     }
 }
+
+// 导出纯函数供单元测试使用
+export {
+    canOperateSession
+};
