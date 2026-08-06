@@ -1,0 +1,1962 @@
+<!DOCTYPE HTML>
+<html lang="cn" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>极简智能体：从零构建 AI Agent</title>
+        <meta name="robots" content="noindex">
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="favicon-8114d1fc.png">
+        <link rel="stylesheet" href="css/variables-8adf115d.css">
+        <link rel="stylesheet" href="css/general-e96d0476.css">
+        <link rel="stylesheet" href="css/chrome-d279d366.css">
+        <link rel="stylesheet" href="css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "searchindex-98a4e933.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="toc-7045e2fb.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                        <button id="mdbook-search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="mdbook-searchbar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352c79.5 0 144-64.5 144-144s-64.5-144-144-144S64 128.5 64 208s64.5 144 144 144z"/></svg></span>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">极简智能体：从零构建 AI Agent</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="mdbook-search-wrapper" class="hidden">
+                    <form id="mdbook-searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="mdbook-searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="mdbook-searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <span class=fa-svg id="fa-spin"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M304 48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zm0 416c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM48 304c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48zm464-48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM142.9 437c18.7-18.7 18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zm0-294.2c18.7-18.7 18.7-49.1 0-67.9S93.7 56.2 75 75s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zM369.1 437c18.7 18.7 49.1 18.7 67.9 0s18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9z"/></svg></span>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="mdbook-searchresults-outer" class="searchresults-outer hidden">
+                        <div id="mdbook-searchresults-header" class="searchresults-header"></div>
+                        <ul id="mdbook-searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <!-- 封面图容器 -->
+<div class="pdf-cover">
+    <img src="images/cover.png" alt="Book Cover" />
+</div>
+
+<!-- 强制 PDF 在此处分页，使后面的正文从第二页开始 -->
+<div style="page-break-before: always;"></div>
+
+<h1 id="前言一次全新的-ai-智能体教程尝试"><a class="header" href="#前言一次全新的-ai-智能体教程尝试">前言：一次全新的 AI 智能体教程尝试</a></h1>
+<p>事情是这样的。我身边有几个 35 岁上下的朋友，这两年都盘算着往 AI 方向转，但聊起来几乎全是焦虑。一方面是 AI 发展实在太快了，今天一个新概念，明天一个新产品，刚觉得自己搞懂了点东西，转眼又冒出一堆听不懂的名词。另一方面，他们也不是没去学过，市面上讲智能体的课程翻了不少，可要么一上来就甩一个臃肿的框架、要么聚焦商业产品的特性、要么花大量篇幅讲理论，来龙去脉压根没交代清楚。有朋友甚至抱怨：“你讲半天，还不如直接给我一段能跑起来的代码，我自己改两把就明白了。”</p>
+<p>这话我越琢磨越觉得有道理，大家需要一个<strong>理论讲解与源码实战融为一体</strong>的智能体教程。不过真准备动手之前，我也没少在版本路线图上犯纠结。一开始贪多，洋洋洒洒列了二十多个版本，什么功能都想往里塞。回头一看，这种搞法我太熟了——我这个人之前搞事情经常半途而废，堆得越多，烂尾得越快。所以后来我逼着自己做减法，狠心砍到七个版本。心说别求大求全，先把最核心的骨架跑通，看看能坚持到哪。于是就有了Tiny Agent这个开源项目。</p>
+<p>它不是什么功能拉满的开发框架，而是一份手把手的教学代码——我把Agent最核心的能力拆成了一个个独立可运行的代码版本，教程每一章与版本对应。每一章都可以实操，你直接切换 <code>Git Tag</code> 就能跳到某个版本，看最精简的实现，跑起来随便改。整条路线像搭积木，从最简单的模型调用开始，一层一层往上叠，最后长出一个能自己思考、查资料、调工具的小智能体。</p>
+<p>交代一下技术选型。后端用的是 Python 搭配 FastAPI，没什么特别的原因，就是图它轻，几行代码就能起一个服务，而且整个项目不依赖任何重型 Agent 框架，所有逻辑从零手写，你看到的就是全部。前端更干脆——原生 HTML + CSS + JavaScript，故意不用 Vue、React 这些东西，怕的就是前端门槛把想学原理的朋友挡在外面。你只要能看懂页面是怎么拼起来的，就能搞明白数据是怎么在浏览器和服务器之间跑的。</p>
+<p>希望读完这个教程后，你不仅能够使用 Agent，更能够理解和设计 Agent，并亲手构建出属于自己的、能解决真实问题的 Agent。</p>
+<p align="right">作者：Leon (leonlu.cc@foxmail.com)</p>
+
+<blockquote>
+<p>本书采用 <strong>CC BY-NC-ND 4.0</strong> 许可协议，商业转载请联系作者进行授权，非商业转载请注明出处。</p>
+</blockquote>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="导读从零构建一个-ai-智能体"><a class="header" href="#导读从零构建一个-ai-智能体">导读：从零构建一个 AI 智能体</a></h1>
+<p>你是否曾被“Agent框架”的黑盒搞得晕头转向？是否在看了一堆理论后，依然不知道一个ReAct循环到底如何落地？我们相信，征服复杂概念的最好方法，不是仰望它，而是亲手拆解、重构它。欢迎来到Tiny Agent的世界，这里没有魔法，只有源码。</p>
+<p>本教程的核心理念只有一句话：最好的学习方式是亲手构建。整个演进过程被精心拆解为迭代的版本（Git Tag），每个版本都聚焦于一个核心能力的从无到有，可以随时切换到任意阶段独立运行和研读源码。</p>
+<p>为了让这套“渐进式”开发和学习真正高效，每个章节都被设计为统一的七段式结构。它既不是干瘪的源码注释，也不是纯理论的白皮书，而是一条从问题到方案的完整思考路径。</p>
+<h2 id="每个章节的结构"><a class="header" href="#每个章节的结构">每个章节的结构</a></h2>
+<p>当你打开任何一个版本对应的章节时，都会看到以下七个部分，它们承担着不同的角色：</p>
+<ol>
+<li>
+<p><strong>概念引入</strong><br>每章不会一上来就丢出代码或术语，而是从一个<strong>真实场景中的棘手问题</strong>出发：为什么单轮问答不够用？为什么大模型需要借助搜索引擎？为什么 Agent 会陷入死循环？通过还原这些痛点，你会清楚地知道这一章要解决什么，以及我们为什么非得引入一套新机制不可。</p>
+</li>
+<li>
+<p><strong>整体方案</strong><br>在动手之前，先用一张架构图把整章的设计思路“鸟瞰”一遍。这里会梳理系统由哪些模块组成，数据如何流转，新增的组件如何与已有部分协作。读完这一节，你应该能够明白“请求从哪进来，经过哪些步骤，最后从哪出去”。</p>
+</li>
+<li>
+<p><strong>核心概念</strong><br>这是最重要的原理层。我们会把整章的关键知识点拆解成若干个小概念逐一讲解，比如“什么是 SSE 协议”、“Message Protocol 中的角色分工”、“ReAct 循环的 Thought → Action → Observation 三态是怎样推导的”。<strong>这一节的目标是让你不仅会做，而且真正懂原理。</strong></p>
+</li>
+<li>
+<p><strong>工程实现</strong><br>开始接触项目代码，但绝不是把几百行源码直接贴出来让你硬读。我们会围绕整章<strong>新增或修改的关键文件</strong>，说明每个模块的职责、核心类的关系以及最重要的运行时流程。你将被引导去关注“数据在哪里被转换”“控制权在哪里被交接”这类结构性问题，而非在细节里迷失。</p>
+</li>
+<li>
+<p><strong>Git Diff 导读</strong><br>因为整个项目被切分到了不同的 Git Tag 中，所以这一节会像一份精炼的代码对比报告：相比上一版本，我们<strong>新增了哪些文件、修改了哪些模块、重构了哪些部分</strong>，每一项变化分别是为了解决上一版本的什么具体问题。你甚至可以把这一节当作检查清单，用来核对自己的理解是否到位。</p>
+</li>
+<li>
+<p><strong>架构思考</strong><br>到此我们并不满足于“跑通了”。这一节会追问三个问题：</p>
+<ul>
+<li><strong>为什么这样设计？</strong>（方案的合理性）</li>
+<li><strong>有没有其他实现方式？</strong>（替代方案及其利弊权衡）</li>
+<li><strong>当前的局限是什么？</strong>（工程落地的优化方向）</li>
+</ul>
+</li>
+<li>
+<p><strong>本章小结</strong><br>简短回顾每章交付的能力，然后自然而然地引出下一个版本将要面对的挑战。你会发现，每个版本的终点，恰好就是下一版本的起点。</p>
+</li>
+</ol>
+<h2 id="整个演进路线一览"><a class="header" href="#整个演进路线一览">整个演进路线一览</a></h2>
+<p>全书共分五个部分，恰好对应了 Tiny Agent <a href="#渐进式演进路线图-full-roadmap">渐进式演进路线</a>的关键版本。每一部分都承担着明确的使命：</p>
+<ul>
+<li>
+<p><strong>第一部分：模型基础与全栈通信（基础篇）</strong><br>从终端里的第一次 LLM 调用开始，搭建流式 Web 前后端通信，实现多轮连续对话，并通过 Prompt Template、System Prompt 与结构化输出让模型“按规矩办事”。这一部分将为你打下不可或缺的全栈基础。<br><strong>里程碑</strong>：构建一个 AI 聊天助手。</p>
+</li>
+<li>
+<p><strong>第二部分：外部知识与规划行动（连接篇）</strong><br>引入 RAG 打通文档切片、向量检索与引用回复的完整链路，用 Function Calling 为 Agent 装上调用外部工具的双手，最后手写 ReAct 核心循环，让 Agent 从被动调用工具走向自主思考、感知与行动。完成这一部分后，你的 Agent 将不再困于训练数据之内。<br><strong>里程碑</strong>：构建一个能够检索知识并自主调用工具的智能体。</p>
+</li>
+<li>
+<p><strong>第三部分：能力拓展与流程编排（拓展篇）</strong><br>通过 MCP 协议统一工具接入标准，以 Skills 实现能力的模块化封装与动态加载，再用 Workflow 将单次调用编排为可复用的多步骤任务流。由此，Agent 的能力边界变得开放、可组合且可持续扩展。<br><strong>里程碑</strong>：构建一个支持标准工具协议、技能可插拔的智能体工作流平台。</p>
+</li>
+<li>
+<p><strong>第四部分：工程强化与生产就绪（强化篇）</strong><br>为 Agent 加入上下文管理与 Token 熔断，构建长期记忆漏斗实现跨会话知识留存；引入混合检索、重排序与向量数据库提升检索精度；通过评估指标与全链路追踪让效果可验证；并建立工具权限分级与确认机制，构筑安全边界，使 Agent 走向可靠、可观测、可审计。<br><strong>里程碑</strong>：构建一个记忆持久、检索精准、行为可审计的高可靠 Agent 系统。</p>
+</li>
+<li>
+<p><strong>第五部分：多模交互与群智协同（前沿篇）</strong><br>突破纯文本界面，赋予 Agent 语音与视觉能力，最终探索多智能体协作模式，让多个不同角色的 Agent 共同完成复杂任务。这是迈向生产级智能体的最后一站。<br><strong>里程碑</strong>：构建一个能听会说、看懂世界并协同工作的多模态多智能体系统。</p>
+</li>
+</ul>
+<p>无论是想深入理解 Agent 底层原理的工程师，还是正做技术选型的架构师，这份教程都会是一张清晰、可动手验证的地图。</p>
+<h2 id="技术栈与前置技能"><a class="header" href="#技术栈与前置技能">技术栈与前置技能</a></h2>
+<p>在开始之前，让我们先对齐一下“装备库”。为了保持轻量与纯粹，我们尽量避免了笨重的框架，选择了一套最符合现代 AI 开发直觉的轻量级技术栈。</p>
+<h3 id="我们的技术栈"><a class="header" href="#我们的技术栈">我们的技术栈</a></h3>
+<ul>
+<li><strong>核心语言</strong>：Python 3.12+（主打简洁与生态，零门槛上手）</li>
+<li><strong>Web 框架</strong>：FastAPI（用于构建高性能的 Agent 后端 API）</li>
+<li><strong>前端交互</strong>：原生 HTML + CSS + JavaScript （用于构建极简 Web 页面）</li>
+<li><strong>版本控制</strong>：Git（我们唯一的“时光机”，用于切换版本代码）</li>
+</ul>
+<h3 id="你需要具备的基础"><a class="header" href="#你需要具备的基础">你需要具备的基础</a></h3>
+<ul>
+<li><strong>Python 基本功</strong>：熟悉基础语法、异步编程及基本的数据结构。</li>
+<li><strong>Git 基础操作</strong>：知道如何 git clone 和 git checkout（我们会带你完成其余操作）。</li>
+<li><strong>无需大模型开发经验</strong>：你不必提前了解其他 Agent概念，我们将从最底层的 API 调用开始，带你手写属于自己的控制流。</li>
+</ul>
+<p>现在，让我们从第一部分开始——你只需要一个 LLM 的 API Key 和一个终端。</p>
+<p><a href="#第一章你好大模型">→ 进入第一章：Hello LLM（你好，大模型）</a></p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="目录"><a class="header" href="#目录">目录</a></h1>
+<h4 id="前言"><a class="header" href="#前言">前言</a></h4>
+<ul>
+<li><a href="#前言一次全新的-ai-智能体教程尝试">前言</a></li>
+<li><a href="#导读从零构建一个-ai-智能体">导读</a></li>
+</ul>
+<h4 id="基础篇模型基础与全栈通信"><a class="header" href="#基础篇模型基础与全栈通信">基础篇——模型基础与全栈通信</a></h4>
+<ul>
+<li><a href="#第一章你好大模型">第一章：你好，大模型</a>
+<ul>
+<li><a href="#1-让-agent-第一次开口">1. 让 Agent 第一次开口</a></li>
+<li><a href="#2-整体方案">2. 整体方案</a></li>
+<li><a href="#3-核心概念">3. 核心概念</a>
+<ul>
+<li><a href="#31-openai-兼容-sdk">3.1 OpenAI 兼容 SDK</a></li>
+<li><a href="#32-环境变量">3.2 环境变量</a></li>
+<li><a href="#33-大模型消息">3.3 大模型消息</a></li>
+<li><a href="#34-单轮调用">3.4 单轮调用</a></li>
+</ul>
+</li>
+<li><a href="#4-工程实现">4. 工程实现</a>
+<ul>
+<li><a href="#41-目录结构">4.1 目录结构</a></li>
+<li><a href="#42-新增依赖">4.2 新增依赖</a></li>
+<li><a href="#43-环境变量管理">4.3 环境变量管理</a></li>
+<li><a href="#44-运行入口">4.4 运行入口</a></li>
+<li><a href="#45-llm-调用逻辑">4.5 LLM 调用逻辑</a></li>
+<li><a href="#46-运行验证">4.6 运行验证</a></li>
+</ul>
+</li>
+<li><a href="#5-git-diff-导读">5. Git Diff 导读</a></li>
+<li><a href="#6-架构思考">6. 架构思考</a>
+<ul>
+<li><a href="#61-为什么先做-cli而不是-web-ui">6.1 为什么先做 CLI，而不是 Web UI？</a></li>
+<li><a href="#62-为什么是-openai-sdk而不是-litellm-等聚合库">6.2 为什么是 OpenAI SDK，而不是 LiteLLM 等聚合库？</a></li>
+<li><a href="#63-为什么只做单轮不做聊天历史">6.3 为什么只做单轮，不做聊天历史？</a></li>
+<li><a href="#64-为什么环境变量使用通用命名">6.4 为什么环境变量使用通用命名？</a></li>
+<li><a href="#65-为什么第一步就要引入-venv-虚拟环境">6.5 为什么第一步就要引入 venv 虚拟环境？</a></li>
+<li><a href="#66-为什么通过-python-dotenv-管理环境变量">6.6 为什么通过 python-dotenv 管理环境变量？</a></li>
+<li><a href="#67-为什么错误处理非常简单">6.7 为什么错误处理非常简单？</a></li>
+</ul>
+</li>
+<li><a href="#7-本章小结">7. 本章小结</a></li>
+</ul>
+</li>
+<li><a href="#第二章web-流式输出">第二章：Web 流式输出</a>
+<ul>
+<li><a href="#1-让回答流动起来">1. 让回答流动起来</a></li>
+<li><a href="#2-整体方案-1">2. 整体方案</a></li>
+<li><a href="#3-核心概念-1">3. 核心概念</a>
+<ul>
+<li><a href="#31-完整响应与增量响应">3.1 完整响应与增量响应</a></li>
+<li><a href="#32-python-异步生成器边生产边交付">3.2 Python 异步生成器：边生产，边交付</a></li>
+<li><a href="#33-sse建立单向事件流">3.3 SSE：建立单向事件流</a></li>
+<li><a href="#34-使用-fetch-读取流式响应">3.4 使用 fetch() 读取流式响应</a></li>
+<li><a href="#35-网络分块不等于-sse-事件">3.5 网络分块不等于 SSE 事件</a></li>
+</ul>
+</li>
+<li><a href="#4-工程实现-1">4. 工程实现</a>
+<ul>
+<li><a href="#41-目录结构-1">4.1 目录结构</a></li>
+<li><a href="#42-增加-web-运行依赖">4.2 增加 Web 运行依赖</a></li>
+<li><a href="#43-configpy集中配置与路径">4.3 config.py：集中配置与路径</a></li>
+<li><a href="#44-mainpy组装应用与管理生命周期">4.4 main.py：组装应用与管理生命周期</a></li>
+<li><a href="#45-llm_servicepy隔离模型协议">4.5 llm_service.py：隔离模型协议</a></li>
+<li><a href="#46-endpointpy从业务事件到-sse">4.6 endpoint.py：从业务事件到 SSE</a></li>
+<li><a href="#47-indexhtml-与-stylecss最小聊天界面">4.7 index.html 与 style.css：最小聊天界面</a></li>
+<li><a href="#48-apijs-与-ssejs分离-http-和流协议">4.8 api.js 与 sse.js：分离 HTTP 和流协议</a></li>
+<li><a href="#49-appjs-与-chat-uijs调度和渲染">4.9 app.js 与 chat-ui.js：调度和渲染</a></li>
+<li><a href="#410-启动与验证">4.10 启动与验证</a></li>
+</ul>
+</li>
+<li><a href="#5-git-diff-导读-1">5. Git Diff 导读</a></li>
+<li><a href="#6-架构思考-1">6. 架构思考</a>
+<ul>
+<li><a href="#61-为什么后端选择-fastapi而不是其他-web-框架">6.1 为什么后端选择 FastAPI，而不是其他 Web 框架？</a></li>
+<li><a href="#62-为什么选择-sse而不是-websocket">6.2 为什么选择 SSE，而不是 WebSocket？</a></li>
+<li><a href="#63-为什么后端要定义业务事件而不原样转发-llm-的-chunk">6.3 为什么后端要定义业务事件，而不原样转发 LLM 的 chunk？</a></li>
+<li><a href="#64-为什么前端使用-fetch而不是-eventsource">6.4 为什么前端使用 fetch()，而不是 EventSource？</a></li>
+<li><a href="#65-页面显示多条消息为什么仍不算多轮对话">6.5 页面显示多条消息，为什么仍不算多轮对话？</a></li>
+<li><a href="#66-当前版本还缺少什么">6.6 当前版本还缺少什么？</a></li>
+</ul>
+</li>
+<li><a href="#7-本章小结-1">7. 本章小结</a></li>
+</ul>
+</li>
+<li><a href="#第三章多轮对话">第三章：多轮对话</a>
+<ul>
+<li><a href="#1-让模型记住刚才的对话">1. 让模型记住刚才的对话</a></li>
+<li><a href="#2-整体方案-2">2. 整体方案</a></li>
+<li><a href="#3-核心概念-2">3. 核心概念</a>
+<ul>
+<li><a href="#31-message-protocol消息协议一条消息不只有文本">3.1 Message Protocol（消息协议）：一条消息不只有文本</a></li>
+<li><a href="#32-chat-history对话历史有序消息序列">3.2 Chat History（对话历史）：有序消息序列</a></li>
+<li><a href="#33-多轮对话不是模型保存了状态">3.3 多轮对话不是模型“保存了状态“</a></li>
+<li><a href="#34-流式回答何时写入历史">3.4 流式回答何时写入历史</a></li>
+<li><a href="#35-历史裁剪保留-system限制总量">3.5 历史裁剪：保留 System，限制总量</a></li>
+</ul>
+</li>
+<li><a href="#4-工程实现-2">4. 工程实现</a>
+<ul>
+<li><a href="#41-session_servicepy对话历史的唯一管理入口">4.1 session_service.py：对话历史的唯一管理入口</a></li>
+<li><a href="#42-endpointpy会话-rest-api">4.2 endpoint.py：会话 REST API</a></li>
+<li><a href="#43-chat_stream从当前输入组装完整历史">4.3 chat_stream()：从当前输入组装完整历史</a></li>
+<li><a href="#44-llm_servicepy从单条文本改为完整消息列表">4.4 llm_service.py：从单条文本改为完整消息列表</a></li>
+<li><a href="#45-_stream_sse转发增量并提交完整一轮">4.5 _stream_sse()：转发增量并提交完整一轮</a></li>
+<li><a href="#46-apijs前端接口与后端会话一一对应">4.6 api.js：前端接口与后端会话一一对应</a></li>
+<li><a href="#47-appjs集中管理当前会话状态">4.7 app.js：集中管理当前会话状态</a></li>
+<li><a href="#48-chat-uijs-与-sidebarjs消息恢复和会话操作">4.8 chat-ui.js 与 sidebar.js：消息恢复和会话操作</a></li>
+<li><a href="#49-启动与验证">4.9 启动与验证</a></li>
+</ul>
+</li>
+<li><a href="#5-git-diff-导读-2">5. Git Diff 导读</a></li>
+<li><a href="#6-架构思考-2">6. 架构思考</a>
+<ul>
+<li><a href="#61-为什么历史由后端管理而不是每次由前端完整上传">6.1 为什么历史由后端管理，而不是每次由前端完整上传？</a></li>
+<li><a href="#62-为什么成功后才保存而不是发送前先保存-user-消息">6.2 为什么成功后才保存，而不是发送前先保存 User 消息？</a></li>
+<li><a href="#63-为什么前端生成期间禁止切换会话">6.3 为什么前端生成期间禁止切换会话？</a></li>
+<li><a href="#64-当前内存会话方案有哪些限制">6.4 当前内存会话方案有哪些限制？</a></li>
+<li><a href="#65-按消息条数裁剪历史为什么还不够">6.5 按消息条数裁剪历史为什么还不够？</a></li>
+<li><a href="#66-message-protocol-与-prompt提示词是什么关系">6.6 Message Protocol 与 Prompt（提示词）是什么关系？</a></li>
+</ul>
+</li>
+<li><a href="#7-本章小结-2">7. 本章小结</a></li>
+</ul>
+</li>
+<li><a href="chapter_04.html">第四章：结构化输出</a></li>
+</ul>
+<h4 id="链接篇外部知识与规划行动"><a class="header" href="#链接篇外部知识与规划行动">链接篇——外部知识与规划行动</a></h4>
+<ul>
+<li><a href="chapter_05.html">第五章：基础检索增强生成</a></li>
+<li><a href="chapter_06.html">第六章：工具调用</a></li>
+<li><a href="chapter_06.html">第七章：智能体循环</a></li>
+</ul>
+<h4 id="拓展篇能力拓展与流程编排"><a class="header" href="#拓展篇能力拓展与流程编排">拓展篇——能力拓展与流程编排</a></h4>
+<p>待补充</p>
+<h4 id="强化篇工程强化与生产就绪"><a class="header" href="#强化篇工程强化与生产就绪">强化篇——工程强化与生产就绪</a></h4>
+<p>待补充</p>
+<h4 id="前沿篇多模交互与群智协同"><a class="header" href="#前沿篇多模交互与群智协同">前沿篇——多模交互与群智协同</a></h4>
+<p>待补充</p>
+<h4 id="附录"><a class="header" href="#附录">附录</a></h4>
+<p><a href="#渐进式演进路线图-full-roadmap">附录1：渐进式演进路线图</a></p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="第一章你好大模型"><a class="header" href="#第一章你好大模型">第一章：你好，大模型</a></h1>
+<blockquote>
+<p><strong>导语</strong>：本章是 Tiny Agent 的起点，不用前端、不做多轮历史，只先跑通“用户输入一句话，大模型回复一句话”的最小闭环。完成本章后，你将掌握大模型的 API 调用方式，为 Agent 开发奠定基础。</p>
+<p><strong>源码版本</strong>：<a href="https://github.com/leonlucc/tiny-agent/tree/v0.1">v0.1</a></p>
+</blockquote>
+<hr>
+<h2 id="1-让-agent-第一次开口"><a class="header" href="#1-让-agent-第一次开口">1. 让 Agent 第一次开口</a></h2>
+<p>在构建 Agent 之前，我们先让程序具备最基础的能力：把一段文本发送给大模型，并把模型返回的文本打印出来。</p>
+<p>一个完整 Agent 以后会有工具、记忆、知识库、规划循环，但它们最终都会回到一个核心动作：<strong>向 LLM 发起请求，并读取返回结果</strong>。所以第一章刻意只保留 CLI 终端交互，让注意力集中在后端请求链路本身。</p>
+<p>本章完成后的运行效果如下：</p>
+<pre><code class="language-bash">$ python -m app.main
+
+==================================================
+Tiny Agent - Hello LLM
+==================================================
+输入一条消息发送给大模型，输入 exit 退出。
+
+你: 你好，请用一句话介绍你自己
+AI: 你好，我是一个可以理解和生成文本的 AI 助手。
+
+你: exit
+再见！
+</code></pre>
+<hr>
+<h2 id="2-整体方案"><a class="header" href="#2-整体方案">2. 整体方案</a></h2>
+<p>本章采用“CLI 输入 → Python 函数 → OpenAI 兼容 SDK → LLM 服务 → CLI 输出”的最小方案，先跑通单轮文本输入与输出。</p>
+<p>整体链路可以拆成四步：</p>
+<ol>
+<li>从 <code>.env</code> 读取模型服务配置。</li>
+<li>使用 <code>OpenAI</code> SDK 创建兼容 OpenAI 协议的客户端。</li>
+<li>把用户输入包装成一条 <code>user</code> 消息，调用 <code>client.chat.completions.create()</code>。</li>
+<li>从响应中取出 <code>response.choices[0].message.content</code> 并打印到终端。</li>
+</ol>
+<p>这个版本没有 Web UI、没有多轮对话，它只做一件事：<strong>验证代码能成功调用LLM并获取回复</strong>。</p>
+<pre class="mermaid">flowchart LR
+    User[CLI 终端&lt;br/&gt;用户输入/输出] --&gt;|输入| App[Python 应用&lt;br/&gt;simple_call.py]
+    App --&gt;|读取配置| Env[.env 环境变量]
+    App --&gt;|API 调用| SDK[OpenAI SDK&lt;br/&gt;兼容客户端]
+    SDK --&gt;|HTTP 请求| LLM[LLM 服务&lt;br/&gt;大模型]
+    LLM --&gt;|响应数据| SDK
+    SDK --&gt;|回复文本| App
+    App --&gt;|打印| User
+</pre>
+
+<hr>
+<h2 id="3-核心概念"><a class="header" href="#3-核心概念">3. 核心概念</a></h2>
+<p>本章只保留实现 Hello LLM 必需的概念。</p>
+<h3 id="31-openai-兼容-sdk"><a class="header" href="#31-openai-兼容-sdk">3.1 OpenAI 兼容 SDK</a></h3>
+<p>OpenAI Python SDK 可以调用 OpenAI 官方接口，也可以调用兼容 OpenAI 协议的第三方大模型服务。</p>
+<p>本章通过两个参数创建一个请求客户端：</p>
+<pre><code class="language-python">client = OpenAI(api_key=api_key, base_url=base_url)
+</code></pre>
+<ul>
+<li><code>api_key</code>：模型服务的访问密钥。</li>
+<li><code>base_url</code>：模型服务的接口地址。</li>
+</ul>
+<h3 id="32-环境变量"><a class="header" href="#32-环境变量">3.2 环境变量</a></h3>
+<p>环境变量用于把密钥、服务地址、模型名称从代码里移出去，避免把敏感信息写死在源码中。</p>
+<p>本章使用三个配置项：</p>
+<ul>
+<li><code>LLM_API_KEY</code>：访问模型服务需要的 API Key。</li>
+<li><code>LLM_BASE_URL</code>：模型服务的 OpenAI 兼容接口地址。</li>
+<li><code>LLM_MODEL</code>：本次调用使用的模型名称。</li>
+</ul>
+<h3 id="33-大模型消息"><a class="header" href="#33-大模型消息">3.3 大模型消息</a></h3>
+<p>LLM 的 Chat 接口不是直接传入一段字符串，而是传入一个消息列表。设计成消息列表，是因为后续可以放入多条历史消息和系统提示词——这让多轮对话成为可能。</p>
+<p>本章只需要一条用户消息：</p>
+<pre><code class="language-python">messages=[{"role": "user", "content": message}]
+</code></pre>
+<ul>
+<li><code>role="user"</code> 表示这条消息来自用户。</li>
+<li><code>content</code> 是用户输入的文本内容。</li>
+</ul>
+<p>后续章节会继续加入 <code>assistant</code> 历史消息和 <code>system</code> 提示词。本章先保持最小结构。</p>
+<h3 id="34-单轮调用"><a class="header" href="#34-单轮调用">3.4 单轮调用</a></h3>
+<p>单轮调用表示每次请求只包含当前这一条用户输入，模型不会自动记住上一次对话。</p>
+<p>核心调用如下：</p>
+<pre><code class="language-python">response = client.chat.completions.create(
+    model=model,
+    messages=[{"role": "user", "content": message}],
+    timeout=30.0,
+)
+</code></pre>
+<p>返回结果中，真正要打印的回复文本位于：</p>
+<pre><code class="language-python">response.choices[0].message.content
+</code></pre>
+<hr>
+<h2 id="4-工程实现"><a class="header" href="#4-工程实现">4. 工程实现</a></h2>
+<p>本章新增一个最小 Python 后端目录，让 <code>backend/app/main.py</code> 作为入口，实际逻辑放在 <code>backend/app/simple_call.py</code>。</p>
+<h3 id="41-目录结构"><a class="header" href="#41-目录结构">4.1 目录结构</a></h3>
+<pre><code class="language-text">backend/
+├── .env.example
+├── requirements.txt
+└── app/
+    ├── __init__.py
+    ├── main.py
+    └── simple_call.py
+</code></pre>
+<h3 id="42-新增依赖"><a class="header" href="#42-新增依赖">4.2 新增依赖</a></h3>
+<p><code>backend/requirements.txt</code>：</p>
+<pre><code class="language-txt">openai&gt;=1.0.0
+python-dotenv&gt;=1.0.0
+</code></pre>
+<h3 id="43-环境变量管理"><a class="header" href="#43-环境变量管理">4.3 环境变量管理</a></h3>
+<p>项目基于<code>.env</code> 文件管理环境变量参数，通过 <code>python-dotenv</code> 读取 <code>.env</code> 文件：</p>
+<pre><code class="language-python">from dotenv import load_dotenv
+
+load_dotenv()
+</code></pre>
+<p>首次需要复制环境变量模板：</p>
+<pre><code class="language-bash">cp .env.example .env
+</code></pre>
+<p>然后根据自己的模型服务填写 <code>.env</code>，以DeepSeek为例：</p>
+<pre><code class="language-bash">LLM_API_KEY=your_api_key_here
+LLM_BASE_URL=https://api.deepseek.com
+LLM_MODEL=deepseek-v4-flash
+</code></pre>
+<blockquote>
+<p><strong>💡 小贴士：安全提醒</strong></p>
+<p><code>.env</code> 文件包含 API Key 等敏感信息，切记将其加入 .gitignore，避免意外提交到版本控制系统。</p>
+</blockquote>
+<blockquote>
+<p><strong>💡 小贴士：如何快速获取 API Key？</strong></p>
+<p>本项目兼容标准的 OpenAI 协议，国内外的诸多主流平台都可以无缝接入。推荐注册并使用国内极速且高性价比的平台，例如 <a href="https://platform.deepseek.com/">DeepSeek</a> 或 <a href="https://siliconflow.cn/">硅基流动</a> 等 API 聚合服务。注册获取 <code>sk-...</code> 格式的密钥后，直接填入 .env 即可无缝运行。</p>
+</blockquote>
+<h3 id="44-运行入口"><a class="header" href="#44-运行入口">4.4 运行入口</a></h3>
+<p><code>backend/app/main.py</code> 只负责暴露运行入口：</p>
+<pre><code class="language-python">"""Tiny Agent 运行入口"""
+
+from app.simple_call import main
+
+
+if __name__ == "__main__":
+    main()
+</code></pre>
+<p>这样用户可以在 <code>backend</code> 目录下运行：</p>
+<pre><code class="language-bash">.venv/bin/python -m app.main
+</code></pre>
+<p>注意：项目的运行工作目录是 <code>backend</code>，如果从其他目录运行会失败。</p>
+<h3 id="45-llm-调用逻辑"><a class="header" href="#45-llm-调用逻辑">4.5 LLM 调用逻辑</a></h3>
+<p><code>backend/app/simple_call.py</code> 承担本章的核心逻辑。</p>
+<p>首先，启动时读取并检查环境变量：</p>
+<pre><code class="language-python">from openai import OpenAI
+
+def create_client() -&gt; tuple[OpenAI, str]:
+    """从环境变量创建兼容 OpenAI 协议的 LLM 客户端，并返回模型名称。"""
+    load_dotenv()
+
+    # 提前检查环境变量是否配置完整
+    api_key = os.getenv("LLM_API_KEY")
+    base_url = os.getenv("LLM_BASE_URL")
+    model = os.getenv("LLM_MODEL")
+
+    if not api_key or api_key == "your_api_key_here":
+        print("错误：未配置 LLM_API_KEY。", file=sys.stderr)
+        print("请复制 .env.example 为 .env，并填写你的 API Key。", file=sys.stderr)
+        raise SystemExit(1)
+
+    if not base_url:
+        print("错误：未配置 LLM_BASE_URL。", file=sys.stderr)
+        print("请复制 .env.example 为 .env，并填写你的模型服务地址。", file=sys.stderr)
+        raise SystemExit(1)
+
+    if not model:
+        print("错误：未配置 LLM_MODEL。", file=sys.stderr)
+        print("请复制 .env.example 为 .env，并填写你的模型名称。", file=sys.stderr)
+        raise SystemExit(1)
+
+    # 构造 LLM 请求客户端
+    return OpenAI(api_key=api_key, base_url=base_url), model
+</code></pre>
+<p>然后，封装一次单轮调用：</p>
+<pre><code class="language-python">def chat_once(client: OpenAI, model: str, message: str) -&gt; str:
+    """向大模型发送一条用户消息，并返回模型回复文本。"""
+    response = client.chat.completions.create(
+        model=model,
+        messages=[{"role": "user", "content": message}],
+        timeout=30.0,
+    )
+
+    content = response.choices[0].message.content
+    return content or ""
+</code></pre>
+<p>最后，<code>main()</code> 负责终端交互：</p>
+<pre><code class="language-python">def main() -&gt; None:
+    """运行最小 CLI，实现单轮文本输入与输出。"""
+    # 打印启动提示
+    print("=" * 50)
+    print("Tiny Agent - Hello LLM")
+    print("=" * 50)
+    print("输入一条消息发送给大模型，输入 exit 退出。")
+    print()
+    sys.stdout.flush()
+
+    # 启动时先创建 LLM 请求客户端
+    client, model = create_client()
+
+    while True:
+        try:
+            # 读取用户输入，并去掉首尾空白字符。
+            user_input = input("你: ").strip()
+        except (EOFError, KeyboardInterrupt):
+            print("\n再见！")
+            return
+
+        # 空输入不发送给模型，直接等待下一次输入。
+        if not user_input:
+            continue
+
+        # 支持exit退出命令
+        if user_input.lower() == "exit":
+            print("再见！")
+            return
+
+        try:
+            # 发起一次 LLM 调用，并将回复直接打印到终端。
+            print("AI: ", end="", flush=True)
+            print(chat_once(client, model, user_input))
+            print()
+        except Exception as exc:
+            print(f"\n调用失败：{exc}\n", file=sys.stderr)
+</code></pre>
+<h3 id="46-运行验证"><a class="header" href="#46-运行验证">4.6 运行验证</a></h3>
+<p>进入 <code>backend</code> 目录：</p>
+<pre><code class="language-bash">.venv/bin/python -m app.main
+</code></pre>
+<p>如果没有配置 API Key，会看到：</p>
+<pre><code class="language-text">错误：未配置 LLM_API_KEY。
+请复制 .env.example 为 .env，并填写你的 API Key。
+</code></pre>
+<p>配置正确后，输入任意文本即可得到模型回复；输入 <code>exit</code> 退出。</p>
+<hr>
+<h2 id="5-git-diff-导读"><a class="header" href="#5-git-diff-导读">5. Git Diff 导读</a></h2>
+<p>本版本相对于空工程，核心变化是新增 <code>backend</code> 目录，上文已经详细讲解，完整代码已提交至 GitHub 仓库，你可以切换到 <code>v0.1</code> Tag查看或直接运行 <code>git checkout v0.1</code>查看。</p>
+<hr>
+<h2 id="6-架构思考"><a class="header" href="#6-架构思考">6. 架构思考</a></h2>
+<p>本章代码很小，但它已经刻意做了几个取舍。</p>
+<h3 id="61-为什么先做-cli而不是-web-ui"><a class="header" href="#61-为什么先做-cli而不是-web-ui">6.1 为什么先做 CLI，而不是 Web UI？</a></h3>
+<p>CLI 能把干扰降到最低：没有页面、没有接口路由、没有前端状态管理，只有一次真实的 LLM 网络请求。</p>
+<p>这有助于建立一个重要直觉：<strong>LLM 调用本质上是一次请求-响应过程</strong>。后续无论接入 Web UI、工具调用还是 Agent Loop，底层都离不开这个动作。</p>
+<h3 id="62-为什么是-openai-sdk而不是-litellm-等聚合库"><a class="header" href="#62-为什么是-openai-sdk而不是-litellm-等聚合库">6.2 为什么是 OpenAI SDK，而不是 LiteLLM 等聚合库？</a></h3>
+<p>在起步阶段，我们面临三种选择：大模型厂商原生 SDK、<code>LiteLLM</code> 等聚合库，以及 <code>LangChain</code> 等重型框架。我们最终选择最基础的 <code>OpenAI</code> SDK，基于以下考量：</p>
+<ul>
+<li><strong>事实上的行业标准</strong>：如今几乎所有主流大模型服务商（如 DeepSeek、Qwen 等）都原生兼容 OpenAI 协议。只需开放 <code>base_url</code> 就能接入 90% 的模型，不需要引入任何第三方抽象层。</li>
+<li><strong>拒绝“中间商”</strong>：<code>LiteLLM</code> 虽好，但它是一层“胶水”。它会屏蔽原始请求和响应的真实结构（如 <code>choices[0].message</code>），让读者失去对大模型原生协议的直觉。一旦报错，你也很难分清是底层接口还是适配层的 bug。</li>
+</ul>
+<h3 id="63-为什么只做单轮不做聊天历史"><a class="header" href="#63-为什么只做单轮不做聊天历史">6.3 为什么只做单轮，不做聊天历史？</a></h3>
+<p>单轮调用更容易观察输入和输出的关系。</p>
+<p>现在每次请求只包含当前用户输入：</p>
+<pre><code class="language-python">messages=[{"role": "user", "content": message}]
+</code></pre>
+<p>所以模型不会自动记住上一轮内容。下一章引入 Chat History 后，我们会把历史消息一起传给模型，让它具备连续对话的上下文。</p>
+<h3 id="64-为什么环境变量使用通用命名"><a class="header" href="#64-为什么环境变量使用通用命名">6.4 为什么环境变量使用通用命名？</a></h3>
+<p>本章使用 <code>LLM_API_KEY</code>、<code>LLM_BASE_URL</code>、<code>LLM_MODEL</code>，而不是把变量名绑定到某个厂商。</p>
+<p>这样做是为了保留替换空间：如果模型服务兼容 OpenAI 协议，通常只需要改 <code>.env</code>，不需要改调用代码。</p>
+<h3 id="65-为什么第一步就要引入-venv-虚拟环境"><a class="header" href="#65-为什么第一步就要引入-venv-虚拟环境">6.5 为什么第一步就要引入 venv 虚拟环境？</a></h3>
+<p>有些初学者教程为了图省事，会让读者直接 <code>pip install</code> 到全局环境。我们从第一章的第一行代码起就强制要求使用 <code>venv</code>，原因很简单：</p>
+<ul>
+<li><strong>防止环境污染</strong>：读者的电脑里可能跑着其他 Python 项目。直接在全局安装依赖极易引发库版本冲突，导致“新项目跑通了，老项目却挂了”的惨剧。通过虚拟环境隔离，并配合 <code>requirements.txt</code> 锁定版本，能彻底杜绝“在作者电脑上能跑，在读者电脑上报错”的诡异 bug。</li>
+<li><strong>零门槛与零依赖</strong>：我们没有选择 <code>Conda</code> 或 <code>uv</code> 等更复杂的工具，是因为 <code>venv</code> 是 Python 3 标准库自带的官方工具。读者不需要额外安装任何软件，用最纯粹的方式解决最核心的隔离问题。</li>
+</ul>
+<h3 id="66-为什么通过-python-dotenv-管理环境变量"><a class="header" href="#66-为什么通过-python-dotenv-管理环境变量">6.6 为什么通过 python-dotenv 管理环境变量？</a></h3>
+<p>在管理 API Key 等敏感信息时，传统的方法是在终端来导入系统环境变量。我们选择引入 <code>python-dotenv</code> 则是基于以下考量：</p>
+<ul>
+<li><strong>开发体验的确定性</strong>：依赖操作系统的 <code>export</code> 具有很强的“临时性”。读者一旦关闭终端窗口、重启电脑，或者在 IDE内置的终端中运行，环境变量就会失效。<code>.env</code> 文件让配置紧贴项目目录，即开即用。</li>
+<li><strong>避免跨平台命令混乱</strong>：不同操作系统的环境变量设置命令完全不同（Linux/macOS 用 <code>export</code>，Windows CMD 用 <code>set</code>，PowerShell 用 <code>$env:</code>），而 <code>.env</code> 文件是全平台通用的。</li>
+</ul>
+<h3 id="67-为什么错误处理非常简单"><a class="header" href="#67-为什么错误处理非常简单">6.7 为什么错误处理非常简单？</a></h3>
+<p>本章的目标是跑通闭环，不是建立完整的错误分类体系。</p>
+<p>因此代码只做两类处理：</p>
+<ul>
+<li>启动时检查环境变量，缺配置就直接提示并退出。</li>
+<li>调用时统一捕获异常，打印“调用失败”。</li>
+</ul>
+<p>更细的网络错误、鉴权错误、限流错误、重试策略，会在后续版本更接近真实应用时再展开。</p>
+<hr>
+<h2 id="7-本章小结"><a class="header" href="#7-本章小结">7. 本章小结</a></h2>
+<p>本章完成了 Tiny Agent 的第一个可运行版本：通过 CLI 读取用户输入，调用大模型，并把回复打印回终端。</p>
+<p>你现在已经拥有了后续所有 Agent 能力的起点：</p>
+<ul>
+<li>使用 <code>.env</code> 管理 <code>LLM_API_KEY</code>、<code>LLM_BASE_URL</code>、<code>LLM_MODEL</code>。</li>
+<li>使用 <code>OpenAI</code> SDK 创建兼容 OpenAI 协议的客户端。</li>
+<li>使用 <code>messages=[{"role": "user", "content": message}]</code> 发起单轮请求。</li>
+<li>使用 <code>response.choices[0].message.content</code> 读取模型回复。</li>
+<li>使用 <code>exit</code> 退出最小 CLI。</li>
+</ul>
+<hr>
+<p>下一章，我们会在这个基础上引入 Web 流式输出，让 Tiny Agent 从一问一答的命令行，走向逐字呈现的浏览器。</p>
+<p><a href="#第二章web-流式输出">→ 进入第二章：Web 流式输出</a></p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="第二章web-流式输出"><a class="header" href="#第二章web-流式输出">第二章：Web 流式输出</a></h1>
+<blockquote>
+<p><strong>导语</strong>：上一章已实现在终端中完成一次 LLM 调用。本章将其升级为浏览器实时流式预览：后端接收并转发模型输出，前端同步解析更新。完成本章后，你将掌握 AI 流式应用全链路构建能力与 SSE 的正确用法。</p>
+<p><strong>源码版本</strong>：<a href="https://github.com/leonlucc/tiny-agent/tree/v0.2">v0.2</a></p>
+</blockquote>
+<hr>
+<h2 id="1-让回答流动起来"><a class="header" href="#1-让回答流动起来">1. 让回答流动起来</a></h2>
+<p>在上一版本中，程序必须等模型生成完全部内容，才能一次性打印回复。问题越复杂、回复越长，用户面对空白界面的时间就越久。即使总耗时没有变化，这种“提交后毫无反馈”的体验也很容易让人怀疑：请求到底发出去了吗？程序是不是卡住了？</p>
+<p>常见的 AI 应用通常不会等完整答案生成后再展示，而是在收到第一批文本后立即呈现，后续内容持续追加。这样不能缩短模型真正的生成时间，却能显著缩短用户感知到的首字等待时间。</p>
+<p>要做到这一点，仅仅增加一个网页还不够。整条链路都必须支持流式传递：</p>
+<ol>
+<li>LLM 服务持续返回增量块，而不是一次返回完整文本。</li>
+<li>后端服务收到片段后立刻向浏览器转发，不能先拼成完整答案。</li>
+<li>浏览器持续读取响应体，并将文本增量渲染到同一条消息中。</li>
+</ol>
+<p>因此，本章的目标是建立最小的实时 Web 闭环：<strong>输入一条消息，模型回复随生成过程逐步出现在网页上</strong>。</p>
+<hr>
+<h2 id="2-整体方案-1"><a class="header" href="#2-整体方案-1">2. 整体方案</a></h2>
+<p>我们将采用前后端分离架构：FastAPI Web 后端服务和原生 HTML + CSS + JavaScript 构成的前端页面。为保持项目开箱即用，暂不拆分静态资源服务器，而是由同一个 FastAPI 应用同时提供 API 和前端页面。</p>
+<p>用户发送消息后，浏览器提交 POST 请求。后端把消息交给 LLM 服务，并开启流式传输。模型每产生一段增量内容，后端服务层就把它转换为与 LLM 服务响应格式解耦的业务事件；后端接口层再把业务事件编码成 SSE 帧（Server-Sent Events，服务端推送事件）。浏览器持续读取响应流，解析出事件内容，最终增量更新页面。</p>
+<pre class="mermaid">flowchart LR
+    User["用户"] --&gt;|输入消息| UI["前端 Web 页面&lt;br/&gt;HTML / CSS / JavaScript"]
+    UI --&gt;|"POST /api/chat/stream&lt;br/&gt;JSON 请求"| API["后端接口层&lt;br/&gt;endpoint.py"]
+    API --&gt;|单条消息| Service["后端服务层&lt;br/&gt;llm_service.py"]
+    Service --&gt;|"stream=True"| LLM["LLM 服务&lt;br/&gt;大模型"]
+    LLM --&gt;|增量返回 | Service
+    Service --&gt;|"reasoning / content&lt;br/&gt;业务事件"| API
+    API --&gt;|"SSE 事件帧"| UI
+    UI --&gt;|"回复消息"| User
+</pre>
+
+<pre class="mermaid">flowchart TB
+
+</pre>
+
+<p>一次请求的运行流程如下：</p>
+<ol>
+<li>页面把用户输入显示在聊天区，并锁定输入框，避免并发发送。</li>
+<li>前端使用 <code>fetch()</code> 函数发起 <code>POST /api/chat/stream</code> 请求，取得 SSE 响应体的读取器。</li>
+<li>后端校验消息，调用异步 LLM 客户端并迭代模型返回的 chunk。</li>
+<li>后端服务层提取增量中的思考内容和正文内容，产生统一业务事件。</li>
+<li>后端接口层将每个事件编码为 <code>data: ...\n\n</code>，并立即写入响应。</li>
+<li>前端按 SSE 空行边界拆帧，识别后端的业务事件。</li>
+<li>前端累积文本并更新同一个模型回复消息的页面；收到 <code>[DONE]</code> 后恢复输入区。</li>
+</ol>
+<p>这里最重要的设计思想是：<strong>链路中的每个环节都要允许流式数据及时通过</strong>。只要某一层等待完整结果后再返回，前面的流式能力就会失去意义。</p>
+<hr>
+<h2 id="3-核心概念-1"><a class="header" href="#3-核心概念-1">3. 核心概念</a></h2>
+<p>本节介绍跑通本章链路必需的知识：LLM 增量输出、异步生成器、SSE 帧格式，以及浏览器端的流式解码。</p>
+<h3 id="31-完整响应与增量响应"><a class="header" href="#31-完整响应与增量响应">3.1 完整响应与增量响应</a></h3>
+<p>上一章使用同步客户端 <code>OpenAI</code> 调用 LLM。调用期间，当前线程会一直等待，直到 SDK 返回已经生成完毕的完整响应：</p>
+<pre><code class="language-python">from openai import OpenAI
+
+client = OpenAI(...)
+response = client.chat.completions.create(...)
+content = response.choices[0].message.content
+</code></pre>
+<p>Web 服务需要在等待模型数据时继续处理其他任务，因此本章改用 <code>AsyncOpenAI</code>。它和上一章的 <code>OpenAI</code> 属于同一个 SDK，但调用方式不同：</p>
+<pre><code class="language-python">from openai import AsyncOpenAI
+
+client = AsyncOpenAI(api_key=api_key, base_url=base_url)
+response = await client.chat.completions.create(
+    model=model,
+    messages=[{"role": "user", "content": message}],
+    stream=True,
+    timeout=30.0,
+)
+
+async for chunk in response:
+    ...
+
+await client.close()
+</code></pre>
+<p>这里有两个变化：</p>
+<ul>
+<li><code>OpenAI</code> 变为 <code>AsyncOpenAI</code>：同步等待变为异步等待，适合并发处理请求的 Web 服务。</li>
+<li><code>stream=False</code>（默认值）变为 <code>stream=True</code>：完整响应变为一系列增量 chunk。</li>
+</ul>
+<p>异步并不自动等于流式；即使使用 <code>AsyncOpenAI</code>，如果没有设置 <code>stream=True</code>，仍然会等待完整响应。反过来，同步客户端也可以请求流式响应，但迭代上游数据时会同步阻塞当前执行线程。本章把两者结合，构成异步流式调用。</p>
+<p>设置 <code>stream=True</code> 后，增量响应的返回位于 <code>choices[0].delta.content</code>，而不再是完整响应中的 <code>choices[0].message.content</code>。我们用 chunk 来表示模型服务返回的传输片段，可能是一个字、一个词，也可能是一小段文本。页面看起来像逐字打印，本质上是收到一批就更新一批。</p>
+<p>部分大模型还会通过扩展字段<code>choices[0].delta.reasoning_content</code>返回可展示的思考内容或推理摘要。该字段并非通用标准，是否存在以及具体语义取决于模型服务，并不等同于模型完整的内部思考内容。</p>
+<p>我们会把两类数据映射为不同业务事件：</p>
+<pre><code class="language-json">{"type": "reasoning", "chunk": "先分析问题……"}
+{"type": "content", "chunk": "最终回答……"}
+</code></pre>
+<p>前端因此不必理解 <code>choices</code>、<code>delta</code> 或不同模型的字段结构，只需认识 Tiny Agent 自己的事件协议。</p>
+<blockquote>
+<p><strong>💡 小贴士：为什么要区分“思考内容”和“回答内容”？</strong></p>
+<p>部分大模型（通常被称为推理模型）在给出最终答案前，会先在内部进行一系列分析、推导，这段过程在流式响应里会通过 reasoning_content 字段逐块返回。可以把它想象成一位老师在纸上打草稿——他一边演算，我们一边就能看到他的思考步骤。而普通模型则像一位经验丰富的助手，省略了“展演”过程，直接给出答案，所以它们的流式 chunk 里只有 content，没有 reasoning_content。</p>
+</blockquote>
+<h3 id="32-python-异步生成器边生产边交付"><a class="header" href="#32-python-异步生成器边生产边交付">3.2 Python 异步生成器：边生产，边交付</a></h3>
+<p>如果要实现一个后端的流式接口，其核心是不一次性返回结果，而是逐次 <code>yield</code>。例如，下面的<code>stream_chat_events()</code> 使用<code>async def</code>和<code>yield</code>定义了一个异步生成器。调用方可以在上游数据到达后逐批迭代，而不必等待完整结果。</p>
+<pre><code class="language-python">async def stream_chat_events():
+    ... # 分批获取并处理 chunk
+    yield {"type": "content", "chunk": chunk}
+</code></pre>
+<p>异步生成器同时解决了两个问题：</p>
+<ul>
+<li>异步化：等待上游网络数据时，它会让出事件循环，不阻塞整个 Web 服务。</li>
+<li>生成器：每次得到有效片段就交给下游，无需把完整回复保存在后端后再发送。</li>
+</ul>
+<blockquote>
+<p><strong>💡 小贴士：如何理解 <code>yield</code> 和 <code>async/await</code></strong></p>
+<p>在 Python 和 JavaScript 中，<code>yield</code> 就像一个可暂停的 <code>return</code>：交出值后函数会记住当前位置，下次取值时从暂停处继续执行，因此带 <code>yield</code> 的函数就是生成器，天生适合“边产生、边消费”的数据序列。<code>yield</code> 本身不创建并发，只负责把数据分批交出；真正的异步能力来自 <code>async/await</code>——它让函数在等待 I/O 等操作时挂起并释放控制权，不阻塞其他任务。将 <code>yield</code> 与 <code>async def</code>结合，就可以定义异步生成器。异步生成器实现了异步迭代协议，可以在 Python 中通过 async for 逐项消费。</p>
+</blockquote>
+<h3 id="33-sse建立单向事件流"><a class="header" href="#33-sse建立单向事件流">3.3 SSE：建立单向事件流</a></h3>
+<p>SSE（Server-Sent Events）是一种基于 HTTP 的服务端到浏览器单向推送机制。本章中，用户消息通过普通 POST 请求发送给后端，模型输出则通过该请求的响应体持续返回。</p>
+<h4 id="响应类型content-type"><a class="header" href="#响应类型content-type">响应类型：<code>Content-Type</code></a></h4>
+<p>服务端首先要通过 HTTP 响应头声明内容类型：</p>
+<pre><code class="language-http">Content-Type: text/event-stream
+Cache-Control: no-cache
+Connection: keep-alive
+X-Accel-Buffering: no
+</code></pre>
+<p>其中，<code>Content-Type: text/event-stream</code> 告诉浏览器：响应体不是一次性 JSON 数据，而是一个持续到达的 SSE 事件流。其余三个响应头服务于流式传输：</p>
+<ul>
+<li><code>Cache-Control: no-cache</code>：避免缓存流式响应。</li>
+<li><code>Connection: keep-alive</code>：保持连接以持续传输数据。</li>
+<li><code>X-Accel-Buffering: no</code>：提示 Nginx 等中间代理不要攒满缓冲区后再统一转发。</li>
+</ul>
+<p>流式输出是端到端能力，如果有中间环节启用了压缩或响应缓冲，即使应用在不断 <code>yield</code>，浏览器也可能迟迟看不到数据。</p>
+<h4 id="消息内容sse-事件帧"><a class="header" href="#消息内容sse-事件帧">消息内容：SSE 事件帧</a></h4>
+<p>响应头只声明如何解释后续数据，真正的消息位于 HTTP 响应体中。最小 SSE 事件由 <code>data:</code> 行和一个空行组成，例如：</p>
+<pre><code class="language-text">data: {"type":"content","chunk":"你"}
+
+data: {"type":"content","chunk":"好"}
+
+data: [DONE]
+</code></pre>
+<ul>
+<li><code>data:</code> 是 SSE 定义的字段名，每个事件以空行结束，统一使用字符串中的 <code>\n\n</code>。</li>
+<li><code>{"type":"...","chunk":"..."}</code> JSON 数据， 是本项目选择的业务载荷格式，并非 SSE 强制规定的格式。</li>
+<li><code>[DONE]</code> 也不是 SSE 标准，而是项目约定的结束标记。</li>
+</ul>
+<p>在 FastAPI 中，通过 <code>StreamingResponse</code> 定义 SSE 响应返回，一个完整的 SSE 接口示例如下：</p>
+<pre><code class="language-python">@app.get("/sse")
+async def sse():
+    async def stream():
+        for chunk in ["你", "好"]:
+            yield f"data: {json.dumps({'type': 'content', 'chunk': chunk}, ensure_ascii=False)}\n\n"
+        yield "data: [DONE]\n\n"
+    return StreamingResponse(
+        stream(),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            "Connection": "keep-alive",
+            "X-Accel-Buffering": "no",
+        }
+    )
+</code></pre>
+<h3 id="34-使用-fetch-读取流式响应"><a class="header" href="#34-使用-fetch-读取流式响应">3.4 使用 <code>fetch()</code> 读取流式响应</a></h3>
+<h4 id="认识-fetch"><a class="header" href="#认识-fetch">认识 fetch()</a></h4>
+<p><code>fetch()</code> 是浏览器提供的内置函数，用来向服务端发送网络请求并获取响应。它支持<code>GET</code>、<code>POST</code> 等多种请求方式。一个最简单的 <code>fetch</code> 请求如下：</p>
+<pre><code class="language-javascript">let response = await fetch('/api/hello');
+let data = await response.json();
+</code></pre>
+<p><code>response.json()</code> 会把服务端返回的完整数据直接解析成一个 JavaScript 对象。</p>
+<h4 id="流式响应的不同之处"><a class="header" href="#流式响应的不同之处">流式响应的不同之处</a></h4>
+<p>本章我们要处理的聊天接口是“流式”的：SSE 接口的返回不会一次性生成好再发送，而是生成一段就发送一段。因此服务端给我们的响应体并不是一个完整的整体，而是一个<strong>连续的数据流</strong>，数据会一块一块地到达。</p>
+<p>如果我们仍然调用 <code>response.json()</code>，它会尝试等待所有数据接收完毕再解析，但在流式场景下这行不通，因为我们可能还没等到完整数据，或者想尽早开始处理已经收到的部分。所以，我们需要另一种读取方式：<strong>逐步读取</strong>。</p>
+<h4 id="发送请求并获取读取器"><a class="header" href="#发送请求并获取读取器">发送请求并获取读取器</a></h4>
+<p>前端依然使用 <code>fetch()</code> 发出请求，把用户输入作为 JSON 发送给流式接口：</p>
+<pre><code class="language-javascript">const response = await fetch('/api/chat/stream', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ message })
+});
+</code></pre>
+<p>这一步和普通 POST 请求一样，指定了请求方法、请求头以及要发送的 JSON 数据。</p>
+<p>接下来，我们不调用 <code>response.json()</code>，而是通过 <code>response.body.getReader()</code> 得到一个<strong>读取器</strong>：</p>
+<pre><code class="language-javascript">const reader = response.body.getReader();
+</code></pre>
+<p><code>response.body</code> 是一个 <code>ReadableStream</code> 对象，代表着可以逐步读取的数据流。<code>getReader()</code> 方法返回一个与该流绑定的读取器，通过它可以一次读取一小块数据，而不是等待全部传输完成。</p>
+<h4 id="循环读取数据块"><a class="header" href="#循环读取数据块">循环读取数据块</a></h4>
+<p>有了 <code>reader</code> 之后，就可以反复调用 <code>reader.read()</code>，每次调用会返回一个包含两个属性的对象：</p>
+<ul>
+<li><code>done</code>：布尔值，表示数据是否已经全部读完（<code>true</code> 表示流已关闭，没有更多数据了）。</li>
+<li><code>value</code>：一个 <code>Uint8Array</code> 类型化数组，存放本次读取到的原始字节数据。</li>
+</ul>
+<p>我们通常在一个循环中使用它，直到 <code>done</code> 为 <code>true</code>：</p>
+<pre><code class="language-javascript">while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+
+    // 在这里处理 value，即收到的一小段字节数据
+}
+</code></pre>
+<p>因为数据是按字节传输的，如果我们要显示文本，还需要把字节转换成字符串（例如使用 <code>TextDecoder</code>）。下一节会详细介绍如何处理和显示这些逐步收到的文本片段。</p>
+<p>通过这种方式，我们就能一边接收数据一边更新界面，让用户看到 AI 的回答“逐字”出现，从而获得更快的响应反馈。</p>
+<h3 id="35-网络分块不等于-sse-事件"><a class="header" href="#35-网络分块不等于-sse-事件">3.5 网络分块不等于 SSE 事件</a></h3>
+<p><code>reader.read()</code> 返回的是底层网络读取到的字节块，而不是应用层的 SSE 事件。一次读取可能只有半个事件，也可能包含多个事件。如果对每次读取的数据直接调用 <code>JSON.parse()</code>，程序只会在理想条件下偶然成功，一旦数据被任意切分，就会因为 JSON 不完整而抛出错误。</p>
+<p>因此，需要维护一个跨读取周期的缓冲区 <code>buffer</code>，流程如下：</p>
+<ol>
+<li>使用 JavaScript 原生文本解码器类型<code>TextDecoder</code>，将收到的字节解码为 UTF-8 文本。连续解码时应采用流式模式 <code>decode(value, { stream: true })</code>，避免一个中文字符的多个字节被拆到不同网络块时发生乱码。</li>
+<li>将新解码的文本追加到 <code>buffer</code> 尾部。</li>
+<li>按 <code>\n\n</code> 分隔符将缓冲区拆分为多个事件片段，取出所有已完整到达的事件。</li>
+<li>拆分后，将末尾可能不完整的片段保留在 <code>buffer</code> 中，等待下一批字节到来后继续拼接。</li>
+<li>对每个完整事件，提取其中的 <code>data:</code> 行；如果内容为 <code>[DONE]</code> 则结束迭代，否则解析 JSON 并通过 <code>yield</code> 将结果传递给上层。</li>
+</ol>
+<p>这层缓冲是流式前端能够稳定工作的关键。<strong>传输层怎样分包，与应用层怎样分事件，是两件不同的事。</strong></p>
+<hr>
+<h2 id="4-工程实现-1"><a class="header" href="#4-工程实现-1">4. 工程实现</a></h2>
+<p>本章把上一版集中在 <code>simple_call.py</code> 的 CLI 程序按照前后端拆分为不同模块，为后续功能扩展和维护提供更好的基础。</p>
+<h3 id="41-目录结构-1"><a class="header" href="#41-目录结构-1">4.1 目录结构</a></h3>
+<pre><code class="language-text">backend/
+├── .env.example              # 环境变量配置示例
+├── requirements.txt          # Python 依赖列表
+├── app/
+│   ├── main.py               # FastAPI 应用入口
+│   ├── config.py             # 配置加载与统一管理
+│   ├── api/
+│   │   └── endpoint.py       # HTTP/SSE 接口定义
+│   └── service/
+│       └── llm_service.py    # LLM 调用与业务封装
+
+frontend/
+├── index.html                # 页面入口
+├── css/
+│   └── style.css             # 页面样式
+├── assets/
+│   └── logo.png              # 静态资源
+└── js/
+    ├── app.js                # 前端调度入口
+    ├── components/
+    │   └── chat-ui.js        # 聊天界面组件
+    └── services/
+        ├── api.js            # HTTP 请求封装
+        └── sse.js            # SSE 流式通信封装
+</code></pre>
+<p>整体目录并未刻意采用复杂的工程化框架，而是遵循单一职责（Single Responsibility）的设计思想，根据功能边界进行拆分：</p>
+<ul>
+<li><strong>后端配置层（config）</strong>：负责统一读取和管理运行配置，不参与业务逻辑。</li>
+<li><strong>后端服务层（services）</strong>：负责封装与 LLM 的交互过程，包括请求组织、响应处理等核心业务逻辑，不关心网络通信方式。</li>
+<li><strong>后端接口层（api）</strong>：负责提供 HTTP 与 SSE 接口，对外暴露统一访问入口，实现请求接收、参数校验以及结果返回。</li>
+<li><strong>前端服务层（services）</strong>：负责封装 HTTP 请求和 SSE 流式通信，对上层屏蔽通信协议细节。</li>
+<li><strong>前端组件层（components）</strong>：负责页面渲染与 DOM（Document Object Model，文档对象模型）操作，实现聊天窗口、消息展示等界面逻辑，不直接处理网络请求。</li>
+</ul>
+<h3 id="42-增加-web-运行依赖"><a class="header" href="#42-增加-web-运行依赖">4.2 增加 Web 运行依赖</a></h3>
+<p><code>backend/requirements.txt</code> 在上一章依赖的基础上增加：</p>
+<pre><code class="language-text">fastapi&gt;=0.115.0
+uvicorn[standard]&gt;=0.30.0
+</code></pre>
+<p>FastAPI 用于声明接口、校验请求并返回流式响应；Uvicorn 是实际监听端口、运行 ASGI 应用的服务器，两者搭配使用。</p>
+<h3 id="43-configpy集中配置与路径"><a class="header" href="#43-configpy集中配置与路径">4.3 <code>config.py</code>：集中配置与路径</a></h3>
+<p>上一章在 CLI 模块中直接调用 <code>load_dotenv()</code> 和 <code>os.getenv()</code>来加载环境变量。进入 Web 结构后，配置成为多个模块的共同依赖，因此迁移到 <code>backend/app/config.py</code>。</p>
+<p>该模块同时承担两项职责：</p>
+<ul>
+<li>从明确的 <code>backend/.env</code> 路径加载模型配置，避免运行目录变化影响配置发现。</li>
+<li>根据当前文件位置计算项目根目录和 <code>frontend</code> 目录，供静态文件托管使用。</li>
+</ul>
+<h3 id="44-mainpy组装应用与管理生命周期"><a class="header" href="#44-mainpy组装应用与管理生命周期">4.4 <code>main.py</code>：组装应用与管理生命周期</a></h3>
+<p><code>backend/app/main.py</code> 从 CLI 入口变成 Web 应用的装配点。通过注册 API、挂载静态页面、定义生命周期函数，构建一个 FastAPI 应用：</p>
+<pre><code class="language-python">from collections.abc import AsyncIterator
+
+import uvicorn
+from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
+
+from app.api.endpoint import router
+from app.config import FRONTEND_DIR
+from app.services.llm_service import close_client, init_client
+
+
+async def lifespan(app: FastAPI) -&gt; AsyncIterator[None]:
+    """管理应用生命周期，启动时初始化 LLM 客户端，关闭时清理资源。"""
+    await init_client()
+    try:
+        yield
+    finally:
+        await close_client()
+
+
+def create_app() -&gt; FastAPI:
+    """创建 FastAPI 应用，注册接口路由并托管前端静态页面。"""
+    app = FastAPI(title="Tiny Agent", lifespan=lifespan)
+    app.include_router(router, prefix="/api")
+    app.mount(
+        "/",
+        StaticFiles(directory=FRONTEND_DIR, html=True),
+        name="frontend",
+    )
+    return app
+</code></pre>
+<p><code>create_app</code> 定义 FastAPI 主体对象，API 路由先注册在 <code>/api</code> 下，前端目录再挂载到根路径。访问 <code>http://127.0.0.1:8000/</code> 会得到 <code>index.html</code>，页面请求 <code>/api/chat/stream</code> 时仍由同一个 FastAPI 应用处理。</p>
+<p><code>lifespan</code> 中 <code>yield</code> 之前的代码在应用启动时执行，之后的代码在应用关闭时执行。因此，启动时调用 <code>init_client()</code>，关闭时调用 <code>close_client()</code>。客户端被整个进程复用，避免每条消息都重新创建连接池；服务退出时则主动释放网络资源。</p>
+<p>最后，入口函数使用 Uvicorn 在 <code>0.0.0.0:8000</code> 启动这个应用：</p>
+<pre><code class="language-python">def main() -&gt; None:
+    app = create_app()
+    uvicorn.run(app, host="0.0.0.0", port=8000)
+</code></pre>
+<h3 id="45-llm_servicepy隔离模型协议"><a class="header" href="#45-llm_servicepy隔离模型协议">4.5 <code>llm_service.py</code>：隔离模型协议</a></h3>
+<p><code>backend/app/service/llm_service.py</code> 是本章后端的业务核心。它持有一个进程级 <code>AsyncOpenAI</code> 客户端和当前模型名，并通过三个函数形成完整生命周期：</p>
+<ul>
+<li><code>init_client()</code>：读取配置并创建客户端。</li>
+<li><code>stream_chat_events(message)</code>：发起流式单轮调用并产生业务事件。</li>
+<li><code>close_client()</code>：关闭客户端并清空引用。</li>
+</ul>
+<p>下面的代码展示了客户端初始化，以及模型 chunk 到业务事件的完整转换：</p>
+<pre><code class="language-python">from collections.abc import AsyncIterator
+from openai import AsyncOpenAI
+from app.config import load_llm_config
+
+_client: AsyncOpenAI | None = None
+_model: str = ""
+
+
+async def init_client() -&gt; None:
+    global _client, _model
+    api_key, base_url, model = load_llm_config()
+    _client = AsyncOpenAI(api_key=api_key, base_url=base_url)
+    _model = model
+
+
+async def stream_chat_events(
+    message: str,
+) -&gt; AsyncIterator[dict[str, str]]:
+    if _client is None:
+        raise RuntimeError("LLM 客户端尚未初始化")
+    response = await _client.chat.completions.create(
+        model=_model,
+        messages=[{"role": "user", "content": message}],
+        stream=True,
+        timeout=30.0,
+    )
+
+    async for chunk in response:
+        if not chunk.choices:
+            continue
+
+        delta = chunk.choices[0].delta
+        if not delta:
+            continue
+
+        reasoning_content = getattr(delta, "reasoning_content", None)
+        if reasoning_content:
+            yield {"type": "reasoning", "chunk": reasoning_content}
+
+        content = delta.content or ""
+        if content:
+            yield {"type": "content", "chunk": content}
+</code></pre>
+<p>服务层会跳过没有 <code>choices</code>、没有 <code>delta</code> 或没有有效文本的 chunk。对有效增量，它分别产生 <code>reasoning</code> 和 <code>content</code> 事件。这样，大模型厂商 SDK 的对象结构被限制在服务层内部，接口层不会依赖这些细节。</p>
+<p>关闭阶段与异步客户端相匹配，也要等待网络资源释放：</p>
+<pre><code class="language-python">async def close_client() -&gt; None:
+    global _client
+    if _client is not None:
+        await _client.close()
+        _client = None
+</code></pre>
+<p>注意，传给模型的消息仍然只有当前用户输入，并没把旧消息再次发给模型。因此它目前只是多次独立的单轮问答，不是多轮对话。</p>
+<pre><code class="language-python">messages=[{"role": "user", "content": message}]
+</code></pre>
+<h3 id="46-endpointpy从业务事件到-sse"><a class="header" href="#46-endpointpy从业务事件到-sse">4.6 <code>endpoint.py</code>：从业务事件到 SSE</a></h3>
+<p><code>backend/app/api/endpoint.py</code> 提供两个接口：</p>
+<ul>
+<li><code>GET /api/health</code>：返回 <code>{"status": "ok"}</code>，供页面显示连接状态。</li>
+<li><code>POST /api/chat/stream</code>：接收 <code>{ "message": "..." }</code> 并返回 SSE 流。</li>
+</ul>
+<p>接口首先校验请求，再用 <code>StreamingResponse</code> 把异步生成器作为响应体：</p>
+<pre><code class="language-python">import json
+import logging
+from collections.abc import AsyncIterator
+from fastapi import APIRouter, HTTPException
+from fastapi.responses import StreamingResponse
+from pydantic import BaseModel
+from app.services.llm_service import stream_chat_events
+
+logger = logging.getLogger(__name__)
+router = APIRouter()
+
+
+class ChatRequest(BaseModel):
+    message: str
+
+
+@router.get("/health")
+async def health() -&gt; dict[str, str]:
+    return {"status": "ok"}
+
+
+@router.post("/chat/stream")
+async def chat_stream(request: ChatRequest) -&gt; StreamingResponse:
+    message = request.message.strip()
+    if not message:
+        raise HTTPException(status_code=400, detail="message 不能为空")
+
+    return StreamingResponse(
+        _stream_sse(stream_chat_events(message)),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            "Connection": "keep-alive",
+            "X-Accel-Buffering": "no",
+        },
+    )
+</code></pre>
+<p>真正的协议转换发生在 <code>_stream_sse()</code>。它异步迭代服务层事件，通过 <code>json.dumps(..., ensure_ascii=False)</code> 保留可读的中文，再包装成 SSE 数据帧：</p>
+<pre><code class="language-python">async def _stream_sse(
+    events: AsyncIterator[dict[str, str]],
+) -&gt; AsyncIterator[str]:
+    try:
+        async for event in events:
+            data = json.dumps(event, ensure_ascii=False)
+            yield f"data: {data}\n\n"
+    except Exception:
+        logger.exception("LLM 流式调用失败")
+        error = {
+            "type": "error",
+            "message": "模型服务暂时不可用，请稍后重试。",
+        }
+        yield f"data: {json.dumps(error, ensure_ascii=False)}\n\n"
+
+    yield "data: [DONE]\n\n"
+</code></pre>
+<p>流式响应有一个与普通 JSON 接口不同的错误处理特点：响应头一旦发出，后端通常不能再把状态码改成 500。因此，流开始后的异常会被记录到服务端日志，并转换为不泄露上游细节的 <code>error</code> 业务事件。无论成功还是失败，生成器最后都会发送一次 <code>[DONE]</code>，让前端拥有确定的结束语义。</p>
+<h3 id="47-indexhtml-与-stylecss最小聊天界面"><a class="header" href="#47-indexhtml-与-stylecss最小聊天界面">4.7 <code>index.html</code> 与 <code>style.css</code>：最小聊天界面</a></h3>
+<p>前端没有引入构建工具或 UI 框架，只使用浏览器原生能力。<code>frontend/index.html</code> 提供用户界面的 DOM 结构：</p>
+<ul>
+<li>用户输入框与发送按钮。</li>
+<li>消息展示区与初始空状态。</li>
+<li>“正在思考”、用户消息、模型回复三个 <code>&lt;template&gt;</code>。</li>
+<li>后端连接状态提示。</li>
+</ul>
+<p>使用 <code>&lt;template&gt;</code> 可以把消息骨架留在 HTML 中，JavaScript 只需克隆节点并填充内容。<code>style.css</code> 负责聊天布局、消息样式、输入状态和移动端适配，不参与业务流程，样式与布局完全独立。</p>
+<h3 id="48-apijs-与-ssejs分离-http-和流协议"><a class="header" href="#48-apijs-与-ssejs分离-http-和流协议">4.8 <code>api.js</code> 与 <code>sse.js</code>：分离 HTTP 和流协议</a></h3>
+<h4 id="http-请求封装"><a class="header" href="#http-请求封装">HTTP 请求封装</a></h4>
+<p><code>frontend/js/services/api.js</code> 封装所有 HTTP 调用，与后端 API 接口一一对应：</p>
+<ul>
+<li><code>chatStream()</code> 负责发送消息、检查 HTTP 状态，并返回响应体读取器。</li>
+<li><code>checkConnection()</code> 访问健康检查接口。</li>
+</ul>
+<h4 id="sse-流式通信协议封装"><a class="header" href="#sse-流式通信协议封装">SSE 流式通信协议封装</a></h4>
+<p><code>frontend/js/services/sse.js</code> 不关心请求从哪里来，只接收一个 SSE 的读取器（reader，即<code>response.body.getReader()</code>的返回），并通过异步生成器持续产生解析后的业务事件。</p>
+<h3 id="49-appjs-与-chat-uijs调度和渲染"><a class="header" href="#49-appjs-与-chat-uijs调度和渲染">4.9 <code>app.js</code> 与 <code>chat-ui.js</code>：调度和渲染</a></h3>
+<h4 id="前端调度入口"><a class="header" href="#前端调度入口">前端调度入口</a></h4>
+<p><code>frontend/js/app.js</code> 是页面的调度中心。启动时获取所有 DOM 节点，分发给组件；持有全局状态，所有状态变更均在此完成，然后统一驱动界面更新。其中的主体函数 <code>sendMessage()</code> 串起一次完整交互：</p>
+<ol>
+<li>展示用户消息，清空并锁定输入区。</li>
+<li>创建“正在思考”指示器和隐藏的模型回复节点。</li>
+<li>发起流式请求，使用 <code>for await...of</code> 消费 SSE 事件。</li>
+<li>分别累积 <code>reasoning</code> 和 <code>content</code>，再更新模型回复。</li>
+<li>正常结束时完成消息；空流或异常时展示错误。</li>
+<li>在 <code>finally</code> 中恢复输入区并重新聚焦。</li>
+</ol>
+<h4 id="聊天界面组件"><a class="header" href="#聊天界面组件">聊天界面组件</a></h4>
+<p><code>frontend/js/components/chat-ui.js</code> 只负责聊天区域的局部交互与 DOM 更新。它通过 <code>createAssistantResponseView()</code> 返回 <code>update</code>、<code>complete</code>、<code>dispose</code> 三个操作供 <code>app.js</code> 调度，把一次模型回复看成一个 UI 生命周期。</p>
+<p>需要注意的是，聊天的文本使用 <code>textContent</code> 写入，而不是直接拼接 <code>innerHTML</code>，既能保留纯文本语义，也避免把模型输出当作可执行 HTML 注入页面。</p>
+<p>随着文本不断增长，聊天区需要持续滚动到底部。代码通过浏览器的 <code>requestAnimationFrame</code> 方法合并高频滚动请求，避免每个小片段都立即触发布局计算。</p>
+<h3 id="410-启动与验证"><a class="header" href="#410-启动与验证">4.10 启动与验证</a></h3>
+<p>先切换到本章源码：</p>
+<pre><code class="language-bash">git checkout v0.2
+</code></pre>
+<p>安装新增依赖并配置环境变量：</p>
+<pre><code class="language-bash">cd backend
+.venv/bin/pip install -r requirements.txt
+</code></pre>
+<p>启动服务：</p>
+<pre><code class="language-bash">.venv/bin/python -m app.main
+</code></pre>
+<p>浏览器访问：</p>
+<pre><code class="language-text">http://127.0.0.1:8000
+</code></pre>
+<p>在输入框中发送一条消息。如果“正在思考”提示随后被模型回复替换，并且回复内容持续增长，说明从模型到浏览器的流式链路已经跑通。
+<label class="checkbox-label"><input class="checkbox-img" type="checkbox"><img src="images/snapshot-v0.2.gif" alt=""><span class="img-wrapper"><img src="images/snapshot-v0.2.gif" alt=""></span></label></p>
+<hr>
+<h2 id="5-git-diff-导读-1"><a class="header" href="#5-git-diff-导读-1">5. Git Diff 导读</a></h2>
+<p>从上一章的基线来看，本章的能力变化可以归纳为四组：</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>变化位置</th><th>核心变化</th><th>解决的问题</th></tr>
+</thead>
+<tbody>
+<tr><td><code>backend/app/main.py</code>、<br><code>config.py</code></td><td>CLI 入口改为 FastAPI 应用；集中配置；托管前端</td><td>让 LLM 能力通过浏览器访问</td></tr>
+<tr><td><code>backend/app/service/</code><br><code>llm_service.py</code></td><td>同步完整调用改为 <code>AsyncOpenAI</code> 流式调用；映射业务事件</td><td>得到可逐段转发的模型增量</td></tr>
+<tr><td><code>backend/app/api/endpoint.py</code></td><td>新增健康检查、POST 流式接口和 SSE 编码</td><td>建立浏览器与模型之间的实时 HTTP 通道</td></tr>
+<tr><td><code>frontend/</code></td><td>新增页面、API 客户端、SSE 解析器和 UI 组件</td><td>解析并实时呈现流式回复</td></tr>
+<tr><td><code>backend/requirements.txt</code></td><td>新增 FastAPI 与 Uvicorn</td><td>提供 ASGI Web 服务运行环境</td></tr>
+</tbody>
+</table>
+</div>
+<p>建议按以下顺序阅读代码：</p>
+<ol>
+<li>从 <code>llm_service.py</code> 看 <code>stream=True</code> 和 delta 如何变成业务事件。</li>
+<li>到 <code>endpoint.py</code> 看业务事件如何被包装成 SSE。</li>
+<li>到 <code>sse.js</code> 看字节流如何恢复为完整事件。</li>
+<li>最后看 <code>app.js</code> 和 <code>chat-ui.js</code> 如何把事件变成界面状态。</li>
+</ol>
+<p>可以直接使用标准命令查看完整变更：</p>
+<pre><code class="language-bash">git diff --stat v0.1..v0.2
+</code></pre>
+<p>其中既包含 README、快速开始文档等配套更新，也包含本章的核心代码。若只关注运行实现，可以缩小比较范围：</p>
+<pre><code class="language-bash">git diff --stat v0.1..v0.2 -- backend/app frontend
+</code></pre>
+<hr>
+<h2 id="6-架构思考-1"><a class="header" href="#6-架构思考-1">6. 架构思考</a></h2>
+<h3 id="61-为什么后端选择-fastapi而不是其他-web-框架"><a class="header" href="#61-为什么后端选择-fastapi而不是其他-web-框架">6.1 为什么后端选择 FastAPI，而不是其他 Web 框架？</a></h3>
+<p>本章需要的后端能力很集中：接收 JSON 请求、异步等待 LLM、持续返回 SSE，并托管一组静态文件。FastAPI 与这些需求比较匹配：</p>
+<ul>
+<li><strong>原生采用 ASGI 和异步接口</strong>：路由函数可以直接使用 <code>async def</code>，自然衔接 <code>AsyncOpenAI</code>、异步生成器，不需要在线程池与异步事件循环之间额外转换。</li>
+<li><strong>流式响应表达直接</strong>：把异步生成器交给 <code>StreamingResponse</code>，每次 <code>yield</code> 的 SSE 帧就能继续向下游传递，代码结构与“边生成、边发送”的数据流一致。</li>
+<li><strong>工程规模合适</strong>：本章只需要两个 API 和静态文件托管，不需要完整的后台管理、ORM、模板系统或复杂的项目脚手架。</li>
+</ul>
+<p>这并不意味着 FastAPI 在所有 Web 项目中都优于其他框架。Flask 同样适合构建小型服务，但它更偏向同步请求模型；Django 提供 ORM、认证、后台管理等完整能力，适合功能更丰富的业务系统，但对当前最小示例来说会引入许多暂时用不到的概念。</p>
+<p>因此，这里的选择标准不是“哪个框架最强”，而是<strong>哪个框架能用最少的额外概念，清楚地呈现本章的异步流式链路</strong>。</p>
+<h3 id="62-为什么选择-sse而不是-websocket"><a class="header" href="#62-为什么选择-sse而不是-websocket">6.2 为什么选择 SSE，而不是 WebSocket？</a></h3>
+<p>本章只有一个实时方向：浏览器提交一次问题，服务端持续返回回答。SSE 建立在普通 HTTP 之上，能直接配合 FastAPI 的 <code>StreamingResponse</code>、浏览器 <code>fetch()</code> 和现有代理基础设施，也便于使用常规 HTTP 工具观察数据。</p>
+<p>WebSocket 更适合双方都要随时主动推送的长连接场景，例如语音对话、协同编辑或服务端主动通知。它当然也能完成本章任务，但会额外引入连接生命周期、消息路由和心跳等概念，不符合本章的最小目标。</p>
+<h3 id="63-为什么后端要定义业务事件而不原样转发-llm-的-chunk"><a class="header" href="#63-为什么后端要定义业务事件而不原样转发-llm-的-chunk">6.3 为什么后端要定义业务事件，而不原样转发 LLM 的 chunk？</a></h3>
+<p>直接把模型 SDK 的响应对象转给前端，代码看起来更少，却会让页面依赖某个 LLM 厂商的字段结构。只要更换模型、SDK 升级或增加新的输出类型，前端就可能跟着修改。</p>
+<p><code>reasoning</code>、<code>content</code>、<code>error</code> 是 Tiny Agent 自己的最小事件协议。服务层负责吸收模型差异，接口层和前端只依赖稳定事件。这是一个很小但重要的抽象层：外部协议变化不会直接扩散到整个应用。</p>
+<h3 id="64-为什么前端使用-fetch而不是-eventsource"><a class="header" href="#64-为什么前端使用-fetch而不是-eventsource">6.4 为什么前端使用 <code>fetch()</code>，而不是 <code>EventSource</code>？</a></h3>
+<p>浏览器原生的 <code>EventSource</code> 能自动连接和解析 SSE，但它主要面向 GET 订阅，不能直接发送带 JSON 请求体的 POST 请求。本章需要把用户输入提交给 <code>/api/chat/stream</code>，因此使用 <code>fetch()</code> 发起 POST，并从 <code>response.body</code> 手动读取事件流。</p>
+<p>另一种设计是先用 POST 创建任务，再让 <code>EventSource</code> 通过 GET 订阅任务结果。这种方式能利用自动重连等原生能力，却需要引入任务 ID、任务状态和额外接口。对 v0.2 的单次问答而言，<code>fetch()</code> 让一次请求同时承载输入和流式输出，链路更短。</p>
+<h3 id="65-页面显示多条消息为什么仍不算多轮对话"><a class="header" href="#65-页面显示多条消息为什么仍不算多轮对话">6.5 页面显示多条消息，为什么仍不算多轮对话？</a></h3>
+<p>“界面保留了旧消息”和“模型拥有对话上下文”是两个不同概念。当前 <code>stream_chat_events()</code> 每次仍然只发送单次的 <code>message</code>。</p>
+<p>之前的用户问题和助理回答只存在于 DOM 中，没有进入下一次 LLM 请求。要支持真正的连续追问，需要定义聊天历史数据结构、维护消息顺序，并在每次调用时把必要上下文一同发送给模型。这正是下一版本要解决的问题。</p>
+<h3 id="66-当前版本还缺少什么"><a class="header" href="#66-当前版本还缺少什么">6.6 当前版本还缺少什么？</a></h3>
+<p>除了单轮问答之外，本章还有意保留以下边界：</p>
+<ul>
+<li>没有取消生成，用户只能等待当前流结束或失败。</li>
+<li>同一页面只允许一个进行中的请求，没有并发流调度。</li>
+<li>不支持 Markdown 渲染，模型输出按安全纯文本展示。</li>
+<li>客户端断开后，尚未显式把取消信号传递给上游模型请求。</li>
+</ul>
+<p>这些都是真实产品会继续解决的问题，但它们不是建立最小流式 Web 链路的必要条件。把它们留到需求出现时再加入。</p>
+<hr>
+<h2 id="7-本章小结-1"><a class="header" href="#7-本章小结-1">7. 本章小结</a></h2>
+<p>本章让 Tiny Agent 从终端中的整段回复，演进为浏览器中的实时流式输出：</p>
+<ul>
+<li>使用 FastAPI 和 Uvicorn 建立最小 Web 服务，并托管原生前端页面。</li>
+<li>使用 <code>AsyncOpenAI</code>、<code>stream=True</code> 和异步生成器逐段接收模型输出。</li>
+<li>用稳定的 <code>reasoning</code>、<code>content</code>、<code>error</code> 业务事件隔离模型协议。</li>
+<li>使用 SSE 将业务事件持续传给浏览器，并用 <code>[DONE]</code> 明确结束。</li>
+<li>使用 <code>fetch()</code>、<code>ReadableStream</code>、<code>TextDecoder</code> 和跨分包缓冲可靠解析事件。</li>
+<li>将 HTTP、SSE、应用调度和 DOM 渲染拆成职责清晰的前端模块。</li>
+</ul>
+<p>现在，Tiny Agent 已经具备一个 AI 应用最基础的全栈实时交互外壳。但它只是把每次独立回答展示在同一个页面上，模型仍然不知道“刚才聊过什么”。</p>
+<p>下一章，我们将在这条流式链路上加入 Chat History，让 Tiny Agent 从多次独立问答走向真正的多轮对话。</p>
+<p><a href="#第三章多轮对话">→ 进入第三章 多轮对话</a></p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="第三章多轮对话"><a class="header" href="#第三章多轮对话">第三章：多轮对话</a></h1>
+<blockquote>
+<p><strong>导语</strong>：上一章已经打通从浏览器到大模型的 SSE 流式链路，但页面上看似连续的消息仍是彼此独立的单轮问答。本章将引入消息协议、对话历史与会话管理，让模型真正理解上下文。完成本章后，你将能够维护会话上下文，并实现可切换、可连续追问的聊天界面。</p>
+<p><strong>源码版本</strong>：<a href="https://github.com/leonlucc/tiny-agent/tree/v0.3">v0.3</a></p>
+</blockquote>
+<hr>
+<h2 id="1-让模型记住刚才的对话"><a class="header" href="#1-让模型记住刚才的对话">1. 让模型记住刚才的对话</a></h2>
+<p>先看一段很自然的交流：</p>
+<pre><code class="language-text">用户：请用一句话介绍 Python。
+AI：Python 是一种强调可读性、生态丰富的通用编程语言。
+用户：它适合初学者吗？
+</code></pre>
+<p>第二个问题中的“它”指的是 Python。人类会自然地结合上一轮内容理解这个代词，但大语言模型并不会自动记住应用此前发过的请求。如果第二次调用仍然只发送：</p>
+<pre><code class="language-json">[
+  {"role": "user", "content": "它适合初学者吗？"}
+]
+</code></pre>
+<p>模型看到的只有一句缺少指代对象的话。即使它偶尔猜对，也不是因为拥有了对话记忆。</p>
+<p>要让模型可靠地理解连续追问，应用必须在第二次调用时重新提交相关历史：</p>
+<pre><code class="language-json">[
+  {"role": "user", "content": "请用一句话介绍 Python。"},
+  {"role": "assistant", "content": "Python 是一种强调可读性、生态丰富的通用编程语言。"},
+  {"role": "user", "content": "它适合初学者吗？"}
+]
+</code></pre>
+<p>这揭示了多轮对话的本质：<strong>模型通常没有应用级的持久记忆，所谓“记住上下文”，是应用按顺序保存消息，并在下一次调用时把历史重新发送给模型。</strong></p>
+<p>因此，本章需要同时解决三个问题：</p>
+<ol>
+<li>用什么结构表达消息角色和先后顺序？</li>
+<li>后端如何把多轮消息归入不同会话，并在请求之间保存？</li>
+<li>前端如何切换会话、恢复消息列表，并让新回复继续流式显示？</li>
+</ol>
+<hr>
+<h2 id="2-整体方案-2"><a class="header" href="#2-整体方案-2">2. 整体方案</a></h2>
+<p>本章延续了上一章的前后端模块，变化集中在流式链路的前后两端：</p>
+<ul>
+<li>请求模型之前，后端从会话中取出历史消息，再追加本轮 User 消息。</li>
+<li>流正常结束之后，后端把完整的 User / Assistant 消息成对写回会话。</li>
+<li>前端新增会话列表和当前会话状态，可以创建、选择、重命名、删除会话，并恢复消息历史。</li>
+</ul>
+<pre class="mermaid">flowchart LR
+    User["用户"] --&gt;|输入消息| UI["前端 Web 页面&lt;br/&gt;HTML / CSS / JavaScript"]
+    UI --&gt;|"POST /api/chat/stream&lt;br/&gt;session_id + message"| API["后端接口层&lt;br/&gt;endpoint.py"]
+    API --&gt;|查询会话| Session["后端服务层(会话)&lt;br/&gt;session_service.py"]
+    Session --&gt;|"历史 messages"| API
+    API --&gt;|"完整 messages"| Service["后端服务层(LLM)&lt;br/&gt;llm_service.py"]
+    Service --&gt;|"stream=True"| LLM["LLM 服务&lt;br/&gt;大模型"]
+    LLM --&gt;|增量返回| Service
+    Service --&gt;|"reasoning / content&lt;br/&gt;业务事件"| API
+    API --&gt;|"SSE 事件帧"| UI
+    UI --&gt;|回复消息| User
+    API --&gt;|"成功后追加消息"| Session
+</pre>
+
+<p>一次连续追问的真实运行顺序如下：</p>
+<ol>
+<li>页面首次加载会话摘要列表，但默认进入一个尚未持久化的“新会话”草稿。</li>
+<li>用户发送第一条消息时，前端调用 <code>POST /api/sessions</code> 创建后端会话。</li>
+<li>前端调用 <code>POST /api/chat/stream</code> 启动聊天，请求体同时携带 <code>session_id</code> 和当前 <code>message</code>。</li>
+<li>后端找到会话，将已有历史转换成模型需要的格式，再在末尾追加当前 User 消息。</li>
+<li>LLM 服务接收完整 <code>messages</code> 列表并发起流式调用。</li>
+<li>后端一边把增量编码为 SSE，一边分别累积回答正文和思考内容。</li>
+<li>流正常结束且包含有效回复后，后端一次性将本轮 User 与 Assistant 消息添加到会话记录。</li>
+<li>前端也把完整的一轮消息加入当前页面状态。</li>
+<li>用户切换会话时，前端通过 <code>GET /api/sessions/{session_id}</code> 重新取得完整历史并绘制消息列表。</li>
+</ol>
+<p>这里存在两类用途不同的历史消息数据：</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>数据</th><th>保存位置</th><th>用途</th></tr>
+</thead>
+<tbody>
+<tr><td>会话与完整消息历史</td><td>后端 <code>SessionService</code></td><td>组装下一次 LLM 请求，作为上下文的事实来源</td></tr>
+<tr><td>当前会话与页面消息</td><td>前端 <code>appState</code></td><td>页面立即渲染、切换交互，减少不必要的重复 API 请求</td></tr>
+</tbody>
+</table>
+</div>
+<p>前端状态让页面响应更快，后端历史才让模型真正获得上下文。二者不能混为一谈。</p>
+<hr>
+<h2 id="3-核心概念-2"><a class="header" href="#3-核心概念-2">3. 核心概念</a></h2>
+<h3 id="31-message-protocol消息协议一条消息不只有文本"><a class="header" href="#31-message-protocol消息协议一条消息不只有文本">3.1 Message Protocol（消息协议）：一条消息不只有文本</a></h3>
+<h4 id="消息角色"><a class="header" href="#消息角色">消息角色</a></h4>
+<p>本章把 OpenAI <code>Chat Completions</code>（会话补全）接口使用的消息结构称为 Message Protocol。它描述消息的角色、内容与排列顺序，但不是所有模型厂商共同遵循的统一正式协议；具体字段及行为仍以所接入服务的接口说明为准。在本章使用的纯文本消息子集中，每条消息包含：</p>
+<pre><code class="language-json">{
+  "role": "user",
+  "content": "你好"
+}
+</code></pre>
+<p>其中，<code>content</code> 是消息内容，<code>role</code> 表示这段内容由谁提供。本章使用三种角色：</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>角色</th><th>含义</th><th>在本项目中的职责</th></tr>
+</thead>
+<tbody>
+<tr><td><code>system</code></td><td>System（系统）消息</td><td>设定助手身份与全局行为，在创建会话时加入</td></tr>
+<tr><td><code>user</code></td><td>User（用户）消息</td><td>表示用户每一轮的输入</td></tr>
+<tr><td><code>assistant</code></td><td>Assistant（助手）消息</td><td>表示模型已经完成的回复，为后续追问提供上下文</td></tr>
+</tbody>
+</table>
+</div>
+<p>角色不是为了给聊天气泡换颜色，而是帮助模型区分“规则”“问题”和“先前回答”。如果只把历史文本拼成一个长字符串，模型仍可能理解，但应用会丢失清晰的发言边界，也难以稳定地维护和裁剪上下文。</p>
+<blockquote>
+<p><strong>💡 小贴士：Message 对象不只有一种形态</strong></p>
+<p>本章使用的是 Chat Completions 消息结构中最小的纯文本子集：<code>role</code> 标识消息作者，<code>content</code> 保存文本。完整协议还允许某些角色使用由多个内容块组成的 <code>content</code>，并通过可选的 <code>name</code> 区分同一角色下的不同参与者。Assistant 消息还可以使用 <code>tool_calls</code> 请求调用工具，相应结果则通过 Tool 消息返回。不同角色允许的字段并不相同，不能把这些字段视为可以任意组合的通用属性。本章尚未使用这些扩展，因此发送给模型的消息只保留 <code>role</code> 和 <code>content</code>。Tool 消息将留到后续的工具调用章节展开。</p>
+</blockquote>
+<h4 id="system-消息"><a class="header" href="#system-消息">System 消息</a></h4>
+<p>System 消息是本章首次引入的角色。它用于提供由应用设定、希望在整个会话中持续生效的背景和行为要求，例如：</p>
+<ul>
+<li>助手是谁，要承担什么职责。</li>
+<li>回答应使用什么语言、语气或表达风格。</li>
+<li>应遵循哪些任务边界和输出原则。</li>
+<li>用户没有重复说明时，默认采用什么上下文。</li>
+</ul>
+<p>本章在创建会话时加入：</p>
+<pre><code class="language-json">{
+  "role": "system",
+  "content": "你是 Tiny Agent，一个简洁、友好的 AI 助手。"
+}
+</code></pre>
+<p>这条消息不会作为普通聊天气泡展示，却会随历史一起发送给模型。于是，用户连续追问时不必在每一轮重复“请保持简洁、友好”，应用也能为不同会话提供一致的基础行为。</p>
+<p>System 消息的必要性不在于“没有它就无法调用模型”——只发送 User 消息同样可以完成一次请求。它真正解决的是<strong>应用要求与用户输入的分层</strong>：稳定的会话级要求由应用放在 System 消息中，本轮具体问题由用户放在 User 消息中。如果二者混在同一段文本里，后续既难以独立维护系统要求，也难以判断哪些内容需要在每轮调用中保留。</p>
+<p>在 Tiny Agent 中，每个新会话只有一条位于历史开头的 System 消息。后端裁剪长历史时也会尽量保留它，因为一旦丢失这条消息，后续请求就可能失去最初设定的助手身份和行为前提。</p>
+<blockquote>
+<p><strong>💡 小贴士：System 并非刚性约束</strong></p>
+<p>在 <code>Chat Completions</code> 风格的接口中，System 消息通常用于表达比普通 User 输入更稳定的应用级要求；具体角色层级、支持范围和遵循效果仍取决于所使用的模型与兼容服务。无论接口如何定义角色，它都只是提供给模型的指令，不是权限控制或安全隔离机制。模型可能误解指令，恶意输入也可能尝试干扰既定行为。身份认证、数据权限、参数校验等安全规则仍必须由应用代码负责，不能只写进 System 消息。</p>
+</blockquote>
+<h4 id="消息顺序"><a class="header" href="#消息顺序">消息顺序</a></h4>
+<p>本章中的消息顺序也具有语义。两轮对话的历史通常是：</p>
+<pre><code class="language-text">system
+user
+assistant
+user
+assistant
+</code></pre>
+<p>下一次调用前，再把新的 <code>user</code> 放到末尾。模型从前往后读取上下文，顺序被打乱就可能错误理解对话关系。</p>
+<h3 id="32-chat-history对话历史有序消息序列"><a class="header" href="#32-chat-history对话历史有序消息序列">3.2 Chat History（对话历史）：有序消息序列</a></h3>
+<p>Chat History 是属于某个会话的有序消息序列。本章设计两个数据类表达它：</p>
+<pre><code class="language-python">@dataclass
+class Message:
+    role: MessageRole
+    content: str
+    reasoning: str | None = None
+
+
+@dataclass
+class ChatSession:
+    session_id: str
+    session_name: str
+    created_at: str
+    messages: list[Message] = field(default_factory=list)
+</code></pre>
+<p>可以把二者理解为：</p>
+<pre><code class="language-text">ChatSession
+├── session_id
+├── session_name
+├── created_at
+└── messages
+    ├── Message(system)
+    ├── Message(user)
+    ├── Message(assistant)
+    └── ...
+</code></pre>
+<p><code>session_id</code> 是前后端关联同一段对话的稳定标识；<code>session_name</code> 用于侧边栏展示；<code>created_at</code> 用于排序；<code>messages</code> 则保持实际对话顺序。</p>
+<p><code>Message</code> 设计两种序列化方式：</p>
+<pre><code class="language-python">def to_dict(self) -&gt; dict[str, str | None]:
+    return {
+        "role": self.role,
+        "content": self.content,
+        "reasoning": self.reasoning,
+    }
+
+def to_llm_dict(self) -&gt; dict[str, str]:
+    return {"role": self.role, "content": self.content}
+</code></pre>
+<p>这是一个很重要的边界：</p>
+<ul>
+<li><code>to_dict()</code> 面向 Tiny Agent 前端，需要把 <code>reasoning</code> 一并回复到页面。</li>
+<li><code>to_llm_dict()</code> 面向模型，只发送模型能够消费的 <code>role</code> 与 <code>content</code>。</li>
+</ul>
+<p>同一个领域对象根据下游需要提供不同视图，可以避免把 UI 专用字段耦合到模型接口。</p>
+<h3 id="33-多轮对话不是模型保存了状态"><a class="header" href="#33-多轮对话不是模型保存了状态">3.3 多轮对话不是模型“保存了状态”</a></h3>
+<p>假设当前后端历史是：</p>
+<pre><code class="language-python">[
+    Message(role="system", content="你是 Tiny Agent……"),
+    Message(role="user", content="什么是 SSE？"),
+    Message(role="assistant", content="SSE 是一种服务端推送机制……"),
+]
+</code></pre>
+<p>用户继续问“它和 WebSocket 有什么区别？”时，后端接口层执行：</p>
+<pre><code class="language-python">user_message = Message(role="user", content=message)
+messages = [item.to_llm_dict() for item in session.messages]
+messages.append(user_message.to_llm_dict())
+</code></pre>
+<p>于是本轮模型输入变成：</p>
+<pre><code class="language-python">[
+    {"role": "system", "content": "你是 Tiny Agent……"},
+    {"role": "user", "content": "什么是 SSE？"},
+    {"role": "assistant", "content": "SSE 是一种服务端推送机制……"},
+    {"role": "user", "content": "它和 WebSocket 有什么区别？"},
+]
+</code></pre>
+<p>每轮请求仍然是一次独立的 HTTP 调用。对话连续感来自应用重放消息历史，而不是模型服务替 Tiny Agent 保存了这个会话。</p>
+<p>这也意味着历史越长，请求通常越大，占用的上下文窗口和推理成本也越多。因此历史必须有边界，不能无限增长。</p>
+<h3 id="34-流式回答何时写入历史"><a class="header" href="#34-流式回答何时写入历史">3.4 流式回答何时写入历史</a></h3>
+<p>流式输出不是一次得到完整 Assistant 消息，而是先后收到多个片段。而历史记录需要的是一条完整 Assistant 消息，因此需要后端在向浏览器转发的同时累积片段：</p>
+<pre><code class="language-python">content_parts: list[str] = []
+reasoning_parts: list[str] = []
+
+async for event in events:
+    if event.get("type") == "content":
+        content_parts.append(event.get("chunk", ""))
+    elif event.get("type") == "reasoning":
+        reasoning_parts.append(event.get("chunk", ""))
+    yield ...
+</code></pre>
+<p>异步迭代正常结束并且确实收到有效内容，才写入历史记录：</p>
+<pre><code class="language-python">await session_service.add_messages(
+    session_id,
+    [
+        user_message,
+        Message(
+            role="assistant",
+            content="".join(content_parts),
+            reasoning="".join(reasoning_parts) or None,
+        ),
+    ],
+)
+</code></pre>
+<p>这项设计保证同一轮 User / Assistant 成对出现。如果上游在生成中途异常，页面可以报告错误，但不把残缺回答保存成正式历史。否则下一轮模型可能把半句话当作已经完成的回答，导致上下文越来越混乱。</p>
+<h3 id="35-历史裁剪保留-system限制总量"><a class="header" href="#35-历史裁剪保留-system限制总量">3.5 历史裁剪：保留 System，限制总量</a></h3>
+<p>本章引入环境变量 <code>MAX_MESSAGES_PER_SESSION</code> 限制单个会话最多保存多少条消息，默认值为 <code>100</code>。追加消息后，如果总数超过限制，服务会尽量保留第一条 System 消息，再保留最近的消息：</p>
+<pre><code class="language-python">if len(session.messages) &gt; DEFAULT_MAX_MESSAGES:
+    first_message = session.messages[0]
+    if first_message.role == "system" and DEFAULT_MAX_MESSAGES &gt; 1:
+        recent_start = -(DEFAULT_MAX_MESSAGES - 1)
+        session.messages = [
+            first_message,
+            *session.messages[recent_start:],
+        ]
+    else:
+        session.messages = session.messages[-DEFAULT_MAX_MESSAGES:]
+</code></pre>
+<p>这是一种按“消息条数”裁剪的教学版策略。它直观、容易验证，但并不等价于按 Token 数控制模型上下文，也不保证裁剪后一定从完整的一轮开始。更精确的 Token 预算、摘要压缩和轮次边界管理属于后续可扩展方向。</p>
+<hr>
+<h2 id="4-工程实现-2"><a class="header" href="#4-工程实现-2">4. 工程实现</a></h2>
+<h3 id="41-session_servicepy对话历史的唯一管理入口"><a class="header" href="#41-session_servicepy对话历史的唯一管理入口">4.1 <code>session_service.py</code>：对话历史的唯一管理入口</a></h3>
+<p>本章新增 <code>backend/app/services/session_service.py</code>。它集中管理消息结构、会话结构及内存存储，避免接口层直接操作全局字典。</p>
+<p>首先用 Python 的静态类型约束 <code>Literal</code> 类型限定合法角色，有助于编辑器和类型检查工具发现赋值错误：</p>
+<pre><code class="language-python">MessageRole = Literal["system", "user", "assistant"]
+</code></pre>
+<p>随后，<code>SessionService</code> 维护所有会话：</p>
+<pre><code class="language-python">class SessionService:
+    def __init__(self) -&gt; None:
+        self.sessions: dict[str, ChatSession] = {}
+        self._counter = 0
+</code></pre>
+<p>创建会话时，会生成 ID、默认名称和创建时间，并立即放入 System 消息：</p>
+<pre><code class="language-python">async def create_session(self) -&gt; ChatSession:
+    create_time = datetime.now().strftime(DATE_FORMAT)
+    self._counter += 1
+    session = ChatSession(
+        session_id=f"session_{create_time}_{self._counter}",
+        session_name=f"新对话-{self._counter}",
+        created_at=create_time,
+        messages=[Message(role="system", content=SYSTEM_PROMPT)],
+    )
+    self.sessions[session.session_id] = session
+    return session
+</code></pre>
+<p>默认提示词定义为：</p>
+<pre><code class="language-python">SYSTEM_PROMPT = "你是 Tiny Agent，一个简洁、友好的 AI 助手。"
+</code></pre>
+<p>System 消息在创建会话时固定进入历史，而不是每次调用时临时拼接。这样从会话详情到模型输入都使用同一份有序数据。</p>
+<p>服务还提供以下操作：</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>方法</th><th>职责</th></tr>
+</thead>
+<tbody>
+<tr><td><code>create_session()</code></td><td>创建带 System 消息的新会话</td></tr>
+<tr><td><code>get_session()</code></td><td>按 ID 获取会话</td></tr>
+<tr><td><code>list_sessions()</code></td><td>按创建时间倒序返回会话</td></tr>
+<tr><td><code>rename_session()</code></td><td>更新会话名称</td></tr>
+<tr><td><code>delete_session()</code></td><td>删除会话</td></tr>
+<tr><td><code>add_messages()</code></td><td>批量追加同一轮消息并统一裁剪</td></tr>
+</tbody>
+</table>
+</div>
+<p>模块末尾创建单例：</p>
+<pre><code class="language-python">session_service = SessionService()
+</code></pre>
+<p>因此，同一 Python 进程内的不同请求会访问同一份会话字典。</p>
+<h3 id="42-endpointpy会话-rest-api"><a class="header" href="#42-endpointpy会话-rest-api">4.2 <code>endpoint.py</code>：会话 REST API</a></h3>
+<p>本章在原有健康检查和流式聊天接口之外，增加一组会话 REST API：</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>方法与路径</th><th>请求体</th><th>返回内容</th></tr>
+</thead>
+<tbody>
+<tr><td><code>GET /api/sessions</code></td><td>无</td><td>会话摘要列表，不包含 <code>messages</code></td></tr>
+<tr><td><code>POST /api/sessions</code></td><td>无</td><td>新建会话完整数据，状态码 <code>201</code></td></tr>
+<tr><td><code>GET /api/sessions/{session_id}</code></td><td>无</td><td>指定会话及完整消息</td></tr>
+<tr><td><code>PUT /api/sessions/{session_id}</code></td><td><code>{"name": "新名称"}</code></td><td>重命名后的完整会话</td></tr>
+<tr><td><code>DELETE /api/sessions/{session_id}</code></td><td>无</td><td><code>{"success": true}</code></td></tr>
+</tbody>
+</table>
+</div>
+<p>列表接口只返回摘要：</p>
+<pre><code class="language-python">@router.get("/sessions")
+async def list_sessions() -&gt; list[dict[str, str]]:
+    sessions = await session_service.list_sessions()
+    return [session.to_summary_dict() for session in sessions]
+</code></pre>
+<p>这是有意的职责划分。侧边栏只需要 ID、名称和创建时间，无需每次加载页面就传输所有会话的完整历史；用户选择某个会话后，再通过详情接口按需加载消息。</p>
+<p>不存在的会话统一返回 <code>404</code>：</p>
+<pre><code class="language-python">session = await session_service.get_session(session_id)
+if session is None:
+    raise HTTPException(status_code=404, detail="会话不存在")
+</code></pre>
+<h3 id="43-chat_stream从当前输入组装完整历史"><a class="header" href="#43-chat_stream从当前输入组装完整历史">4.3 <code>chat_stream()</code>：从当前输入组装完整历史</a></h3>
+<p>上一章的请求体只有 <code>message</code>。本章新增 <code>session_id</code>：</p>
+<pre><code class="language-python">class ChatRequest(BaseModel):
+    session_id: str
+    message: str
+</code></pre>
+<p>请求示例：</p>
+<pre><code class="language-json">{
+  "session_id": "session_20260101123000_1",
+  "message": "继续解释刚才的例子"
+}
+</code></pre>
+<p>接口先校验消息和会话，再构造完整模型输入：</p>
+<pre><code class="language-python">@router.post("/chat/stream")
+async def chat_stream(request: ChatRequest) -&gt; StreamingResponse:
+    message = request.message.strip()
+    if not message:
+        raise HTTPException(status_code=400, detail="message 不能为空")
+
+    session = await session_service.get_session(request.session_id)
+    if session is None:
+        raise HTTPException(status_code=404, detail="会话不存在")
+
+    user_message = Message(role="user", content=message)
+    messages = [item.to_llm_dict() for item in session.messages]
+    messages.append(user_message.to_llm_dict())
+
+    return StreamingResponse(
+        _stream_sse(
+            stream_chat_events(messages),
+            session_id=request.session_id,
+            user_message=user_message,
+        ),
+        media_type="text/event-stream",
+        ...
+    )
+</code></pre>
+<p>注意，当前 User 消息先加入本次模型输入，但还没有写入正式历史。只有 <code>_stream_sse()</code> 确认生成成功后，才会把它和 Assistant 回复一起保存。</p>
+<h3 id="44-llm_servicepy从单条文本改为完整消息列表"><a class="header" href="#44-llm_servicepy从单条文本改为完整消息列表">4.4 <code>llm_service.py</code>：从单条文本改为完整消息列表</a></h3>
+<p>LLM 服务层的变化很小，却是多轮能力真正生效的关键。</p>
+<p>上一章接收一个 message 字符串，并在内部构造单条 User 消息；本章改为直接接收完整列表：</p>
+<pre><code class="language-python">async def stream_chat_events(
+    messages: list[dict[str, str]],
+) -&gt; AsyncIterator[dict[str, str]]:
+    response = await _client.chat.completions.create(
+        model=_model,
+        messages=messages,
+        stream=True,
+        timeout=30.0,
+    )
+    ...
+</code></pre>
+<p>服务层依旧只负责调用模型并输出 <code>reasoning</code> / <code>content</code> 业务事件。它不查询会话，也不决定历史是否应该保存。会话编排职责留在接口层，模型协议适配职责留在 LLM 服务层，确保单一职责。</p>
+<h3 id="45-_stream_sse转发增量并提交完整一轮"><a class="header" href="#45-_stream_sse转发增量并提交完整一轮">4.5 <code>_stream_sse()</code>：转发增量并提交完整一轮</a></h3>
+<p><code>_stream_sse()</code> 现在同时承担两个紧密相关的职责：</p>
+<ol>
+<li>把业务事件编码为 SSE 帧。</li>
+<li>收集本轮完整回复，并在流成功结束后提交对话历史。</li>
+</ol>
+<pre><code class="language-python">try:
+    async for event in events:
+        ...
+        yield f"data: {json.dumps(event, ensure_ascii=False)}\n\n"
+except Exception:
+    logger.exception("LLM 流式调用失败")
+    error = {"type": "error", "message": "模型服务暂时不可用，请稍后重试。"}
+    yield f"data: {json.dumps(error, ensure_ascii=False)}\n\n"
+else:
+    has_response = bool(content_parts or reasoning_parts)
+    if not has_response:
+        error = {"type": "error", "message": "模型未返回有效回复，请稍后重试。"}
+        yield f"data: {json.dumps(error, ensure_ascii=False)}\n\n"
+    elif session_id is not None and user_message is not None:
+        await session_service.add_messages(...)
+
+yield "data: [DONE]\n\n"
+</code></pre>
+<p>函数使用 <code>try / except / else</code> 区分失败和成功，<code>else</code> 只会在 <code>try</code> 没有抛出异常时执行。因此：</p>
+<ul>
+<li>正常且有内容：保存 User / Assistant 消息。</li>
+<li>正常但空流：发送“模型未返回有效回复”事件，不保存消息。
+<ul>
+<li>生成中异常：发送通用错误事件，不保存消息。</li>
+</ul>
+</li>
+</ul>
+<p>这保留了上一章的 SSE 协议，同时为历史写入增加了明确的提交时机。</p>
+<h3 id="46-apijs前端接口与后端会话一一对应"><a class="header" href="#46-apijs前端接口与后端会话一一对应">4.6 <code>api.js</code>：前端接口与后端会话一一对应</a></h3>
+<p><code>frontend/js/services/api.js</code> 新增：</p>
+<pre><code class="language-javascript">const SESSIONS_ENDPOINT = '/api/sessions';
+</code></pre>
+<p><code>APIClient</code> 随后封装 <code>listSessions()</code>、<code>createSession()</code>、<code>getSession()</code>、<code>renameSession()</code> 和 <code>deleteSession()</code>。流式请求也改为携带会话 ID：</p>
+<pre><code class="language-javascript">async chatStream(sessionId, message) {
+    const response = await this.request(CHAT_STREAM_ENDPOINT, {
+        method: 'POST',
+        body: JSON.stringify({ session_id: sessionId, message })
+    });
+    return response.body.getReader();
+}
+</code></pre>
+<p>接口模块只处理 HTTP 请求和错误响应，不直接修改页面状态。</p>
+<h3 id="47-appjs集中管理当前会话状态"><a class="header" href="#47-appjs集中管理当前会话状态">4.7 <code>app.js</code>：集中管理当前会话状态</a></h3>
+<p>应用入口的状态从单一的 <code>isTyping</code> 扩展为：</p>
+<pre><code class="language-javascript">const appState = {
+    sessions: [],
+    currentSession: null,
+    isTyping: false,
+    isSessionLoading: false
+};
+</code></pre>
+<p>其中：</p>
+<ul>
+<li><code>sessions</code> 保存侧边栏所需的会话集合。</li>
+<li><code>currentSession</code> 保存当前会话及其完整消息。</li>
+<li><code>isTyping</code> 表示模型是否正在流式生成。</li>
+<li><code>isSessionLoading</code> 表示会话是否正在创建、切换或修改。</li>
+</ul>
+<p>两个忙碌状态会统一锁定输入区和侧边栏：</p>
+<pre><code class="language-javascript">function syncInteractionState() {
+    const isBusy = appState.isTyping || appState.isSessionLoading;
+    setSidebarBusy(isBusy);
+    setComposerBusy(isBusy);
+}
+</code></pre>
+<p>这避免用户在生成期间切换或删除会话，使“正在显示的流”“当前会话状态”和“后端写入目标”发生错位。</p>
+<h4 id="延迟创建空会话"><a class="header" href="#延迟创建空会话">延迟创建空会话</a></h4>
+<p>点击“新建会话”时，前端只进入本地草稿状态：</p>
+<pre><code class="language-javascript">function startNewSession(options = {}) {
+    if (!canOperateSession(options.keepLoading)) return;
+    appState.currentSession = null;
+    renderSessionList();
+    updateCurrentTitle();
+    renderMessages([]);
+    focusComposer();
+}
+</code></pre>
+<p>直到用户第一次发送消息，<code>ensureCurrentSession()</code> 才调用后端：</p>
+<pre><code class="language-javascript">async function ensureCurrentSession() {
+    if (appState.currentSession) return appState.currentSession;
+
+    const session = await apiClient.createSession();
+    appState.sessions = [session, ...appState.sessions];
+    setCurrentSession(session);
+    return session;
+}
+</code></pre>
+<p>这样反复点击“新建会话”不会制造大量没有内容的后端会话。</p>
+<h4 id="发送成功后同步前端历史"><a class="header" href="#发送成功后同步前端历史">发送成功后同步前端历史</a></h4>
+<p>流式回复完成后，前端把本轮消息加入当前会话：</p>
+<pre><code class="language-javascript">session.messages.push(
+    { role: 'user', content },
+    {
+        role: 'assistant',
+        content: streamedContent,
+        reasoning: streamedReasoning || null
+    }
+);
+</code></pre>
+<p>后端已经保存了同样的一轮，这里的追加用于保持当前页面状态同步。下一条消息仍然由后端根据自己的对话历史组装模型输入，前端不会把整份历史随请求上传。</p>
+<h3 id="48-chat-uijs-与-sidebarjs消息恢复和会话操作"><a class="header" href="#48-chat-uijs-与-sidebarjs消息恢复和会话操作">4.8 <code>chat-ui.js</code> 与 <code>sidebar.js</code>：消息恢复和会话操作</a></h3>
+<p><code>chat-ui.js</code> 新增 <code>renderMessages()</code>，在选择会话时清空聊天区并按顺序重绘：</p>
+<pre><code class="language-javascript">function renderMessages(messages = []) {
+    dom.chatContainer.replaceChildren();
+    const visibleMessages = messages.filter(message =&gt; message.role !== 'system');
+    ...
+}
+</code></pre>
+<p>System 消息会参与模型调用，但不会显示为普通聊天气泡。User 与 Assistant 消息则按照历史顺序呈现，Assistant 的 <code>reasoning</code> 也可以恢复到思考区域。</p>
+<p>新增的 <code>sidebar.js</code> 主要负责如下功能，它不持有会话业务状态，而是把操作通过回调交给 <code>app.js</code>：</p>
+<ul>
+<li>绘制会话列表与当前选中态。</li>
+<li>新建、选择、重命名和删除交互。</li>
+<li>桌面端折叠与移动端抽屉。</li>
+</ul>
+<p>此外，本章还加入 <code>markdown.js</code>，使用两个第三方库对大模型返回的 Markdown 格式进行页面渲染， 其中 <code>marked</code> 负责将内容解析为 HTML，<code>DOMPurify</code> 负责清洗 HTML。这使前端能安全地展示常见的 Markdown 格式，但它是本章的 UI 完善项，不是多轮对话成立的条件。</p>
+<h3 id="49-启动与验证"><a class="header" href="#49-启动与验证">4.9 启动与验证</a></h3>
+<p>先切换到本章源码：</p>
+<pre><code class="language-bash">git checkout v0.3
+</code></pre>
+<p>安装运行依赖：</p>
+<pre><code class="language-bash">cd backend
+.venv/bin/pip install -r requirements.txt
+</code></pre>
+<p>如果还没有环境变量文件，可参考 <code>backend/.env.example</code> 配置模型服务，然后启动：</p>
+<pre><code class="language-bash">.venv/bin/python -m app.main
+</code></pre>
+<p>浏览器访问：</p>
+<pre><code class="language-text">http://127.0.0.1:8000
+</code></pre>
+<p>可以用以下步骤验证多轮能力：</p>
+<ol>
+<li>输入“请记住项目代号是极简”，等待回复完成。</li>
+<li>继续追问“刚才的代号是什么？”。</li>
+<li>新建另一个会话，再问“代号是什么？”。</li>
+<li>切回第一个会话，确认旧消息重新显示，再继续追问。</li>
+</ol>
+<p>预期结果是：第一个会话能结合历史回答“极简”，新会话没有这段上下文，不同会话之间互不共享消息。
+<label class="checkbox-label"><input class="checkbox-img" type="checkbox"><img src="images/snapshot-v0.2.gif" alt=""><span class="img-wrapper"><img src="images/snapshot-v0.2.gif" alt=""></span></label></p>
+<p>本章还新增了前后端单元测试。后端的测试需安装开发依赖并运行：</p>
+<pre><code class="language-bash">.venv/bin/pip install -r requirements-dev.txt
+.venv/bin/pytest
+</code></pre>
+<p>前端的测试可直接使用 Node.js 运行：</p>
+<pre><code class="language-bash">node --test frontend/tests/*.test.mjs
+</code></pre>
+<hr>
+<h2 id="5-git-diff-导读-2"><a class="header" href="#5-git-diff-导读-2">5. Git Diff 导读</a></h2>
+<p>本章的核心变化可以归纳为：</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>变化位置</th><th>实质变化</th><th>解决的问题</th></tr>
+</thead>
+<tbody>
+<tr><td><code>backend/app/services/</code><br><code>session_service.py</code></td><td>新增 Message、ChatSession 与内存 SessionService</td><td>建立有序、分会话的历史数据结构</td></tr>
+<tr><td><code>backend/app/api/</code><br><code>endpoint.py</code></td><td>新增会话 CRUD；聊天请求携带 <code>session_id</code>；成功后保存完整一轮</td><td>管理会话生命周期并形成连续上下文</td></tr>
+<tr><td><code>backend/app/services/</code><br><code>llm_service.py</code></td><td>参数从单条字符串改为完整 <code>messages</code> 列表</td><td>让模型真正收到历史消息</td></tr>
+<tr><td><code>frontend/js/app.js</code></td><td>增加会话集合、当前会话和加载状态</td><td>协调创建、切换、连续发送与页面同步</td></tr>
+<tr><td><code>frontend/js/components/</code><br><code>chat-ui.js</code></td><td>支持按历史重绘消息</td><td>切换会话后恢复聊天内容</td></tr>
+<tr><td><code>frontend/js/components/</code><br><code>sidebar.js</code></td><td>新增会话列表及增删改选交互</td><td>让用户管理多段独立对话</td></tr>
+<tr><td><code>frontend/js/services/</code><br><code>api.js</code></td><td>封装会话 REST API，流式请求增加会话 ID</td><td>对接后端会话能力</td></tr>
+<tr><td><code>frontend/js/components/</code><br><code>markdown.js</code></td><td>安全解析模型 Markdown</td><td>改善消息展示</td></tr>
+<tr><td><code>backend/tests/</code>、<br><code>frontend/tests/</code></td><td>增加核心回归测试</td><td>验证历史顺序、失败边界和协议解析</td></tr>
+</tbody>
+</table>
+</div>
+<p>建议按真实数据流阅读：</p>
+<ol>
+<li>从 <code>session_service.py</code> 理解 Message 与 ChatSession。</li>
+<li>查看 <code>endpoint.py</code> 如何取出历史、追加当前输入，并在成功后保存。</li>
+<li>查看 <code>llm_service.py</code> 如何原样接收完整消息列表。</li>
+<li>查看 <code>api.js</code> 和 <code>app.js</code> 如何围绕 <code>session_id</code> 调度请求。</li>
+<li>最后阅读 <code>chat-ui.js</code> 与 <code>sidebar.js</code> 的界面恢复和操作逻辑。</li>
+</ol>
+<p>查看完整差异：</p>
+<pre><code class="language-bash">git diff --stat v0.2..v0.3
+</code></pre>
+<p>只关注核心运行代码：</p>
+<pre><code class="language-bash">git diff v0.2..v0.3 -- backend/app frontend
+</code></pre>
+<hr>
+<h2 id="6-架构思考-2"><a class="header" href="#6-架构思考-2">6. 架构思考</a></h2>
+<h3 id="61-为什么历史由后端管理而不是每次由前端完整上传"><a class="header" href="#61-为什么历史由后端管理而不是每次由前端完整上传">6.1 为什么历史由后端管理，而不是每次由前端完整上传？</a></h3>
+<p>让前端提交全部历史也能实现多轮，但服务端将无法确认消息是否被删改、角色是否被伪造，也难以让多个页面使用一致历史。本章让前端只提交 <code>session_id</code> 和当前输入，由后端查找并组装历史，职责更清楚：</p>
+<ul>
+<li>前端负责告诉后端“在哪个会话中说了什么”。</li>
+<li>后端负责决定“模型应该看到哪些可信历史”。</li>
+</ul>
+<p>这并不意味着前端无需保存任何消息。它仍保留当前会话数据用于快速渲染，只是不把这份 UI 状态当成模型上下文的权威来源。</p>
+<h3 id="62-为什么成功后才保存而不是发送前先保存-user-消息"><a class="header" href="#62-为什么成功后才保存而不是发送前先保存-user-消息">6.2 为什么成功后才保存，而不是发送前先保存 User 消息？</a></h3>
+<p>如果先保存 User，模型调用随后失败，历史末尾就会留下一个没有 Assistant 回应的孤立问题。下次重试或追问时，应用需要额外判断这条消息属于失败请求、待重试请求，还是正常的未完成状态。</p>
+<p>本章不实现复杂的消息状态机，而是在成功后一次追加 User / Assistant。这个选择非常适合当前教学阶段：历史中只有已经完成的轮次，读取和重放逻辑都保持简单。</p>
+<p>代价是失败的用户输入不会成为历史。如果产品需要展示失败消息、支持原地重试，就应为消息增加 <code>pending</code>、<code>completed</code>、<code>failed</code> 等状态，并设计幂等重试策略。</p>
+<h3 id="63-为什么前端生成期间禁止切换会话"><a class="header" href="#63-为什么前端生成期间禁止切换会话">6.3 为什么前端生成期间禁止切换会话？</a></h3>
+<p>一次流式请求会持续更新某个 Assistant 消息节点，结束时还会修改当前会话的本地历史。如果此时允许切换或删除会话，就必须精确追踪“每条流属于哪个会话、哪个 DOM 节点、是否仍然可见”，并处理多个请求并发完成的顺序。</p>
+<p>本章通过忙碌锁把并发问题收窄为“任一时刻只有一个会话操作或一个生成任务”。这不是聊天产品的通用上限，而是为了集中讲清历史管理，不提前引入取消、后台生成和多流调度。</p>
+<h3 id="64-当前内存会话方案有哪些限制"><a class="header" href="#64-当前内存会话方案有哪些限制">6.4 当前内存会话方案有哪些限制？</a></h3>
+<p><code>SessionService</code> 的字典让多轮机制一目了然，但它只是当前阶段的最小实现：</p>
+<ul>
+<li>服务重启后，所有会话都会丢失。</li>
+<li>多进程或多实例部署时，每个进程拥有不同字典，历史不共享。</li>
+<li>没有用户身份与权限控制，任何知道会话 ID 的客户端都可访问对应接口。</li>
+<li>没有数据库事务、并发版本控制和跨设备同步。</li>
+<li><code>session_id</code> 用时间与进程内计数器生成，不是面向分布式系统的全局 ID 方案。</li>
+</ul>
+<p>因此，本章所说的“可保留对话历史”，是指同一服务进程存活期间可以跨请求、跨页面操作读取历史，不代表已经实现持久化存储。</p>
+<h3 id="65-按消息条数裁剪历史为什么还不够"><a class="header" href="#65-按消息条数裁剪历史为什么还不够">6.5 按消息条数裁剪历史为什么还不够？</a></h3>
+<p>不同消息长度差异很大：一百条“你好”和一百条长代码占用的 Token 完全不同。模型真正受限的是上下文窗口，而不是消息数量。</p>
+<p>此外，当前裁剪会保留 System 消息和最近若干条消息，但在某些上限配置下可能从 Assistant 消息开始，破坏完整轮次边界。生产级方案通常还会考虑：</p>
+<ul>
+<li>根据模型 Token 规则计算预算。</li>
+<li>优先保留 System 消息和最近的完整轮次。</li>
+<li>把更早内容压缩成摘要。</li>
+<li>对工具结果、附件等大消息使用单独策略。</li>
+</ul>
+<p>本章先用条数上限建立“历史必须受控”的意识，不提前引入 Tokenizer 和摘要模型。</p>
+<h3 id="66-message-protocol-与-prompt提示词是什么关系"><a class="header" href="#66-message-protocol-与-prompt提示词是什么关系">6.6 Message Protocol 与 Prompt（提示词）是什么关系？</a></h3>
+<p>Message Protocol 解决“谁说了什么、按什么顺序说”的结构问题；Prompt 则是消息中的具体指令内容。本章已有一个固定 System Prompt，但还没有模板化输入，也没有要求模型返回程序可验证的固定结构。</p>
+<p>下一章将在现有多轮消息链路上进一步引入 Prompt Template（提示词模板）、Structured Outputs（结构化输出），让模型回复从面向人阅读的自然语言，演进为程序也能可靠消费的数据。</p>
+<hr>
+<h2 id="7-本章小结-2"><a class="header" href="#7-本章小结-2">7. 本章小结</a></h2>
+<p>本章让 Tiny Agent 从“页面上连续显示多次单轮问答”，演进为模型真正拥有上下文的多轮聊天：</p>
+<ul>
+<li>用 System / User / Assistant 角色表达清晰、有序的 Message Protocol。</li>
+<li>用 <code>Message</code>、<code>ChatSession</code> 和 <code>SessionService</code> 管理分会话的 Chat History。</li>
+<li>每次调用前重放历史并追加当前 User 消息，让模型理解连续追问。</li>
+<li>在流成功后把 User / Assistant 成对写入历史，避免保存残缺回复。</li>
+<li>通过会话 REST API 支持创建、选择、重命名、删除和恢复对话。</li>
+<li>前端新增消息历史、会话侧边栏和统一忙碌状态，同时保留 SSE 流式体验。</li>
+</ul>
+<p>现在，Tiny Agent 已经能够围绕同一上下文持续交流。但模型输出仍主要是给人阅读的自由文本，程序很难稳定地提取其中字段。</p>
+<p>下一章，我们将在多轮对话之上加入提示词模板与结构化输出，让模型不仅“接得上话”，还能够“按约定格式回答”。</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="渐进式演进路线图-full-roadmap"><a class="header" href="#渐进式演进路线图-full-roadmap">渐进式演进路线图 (Full Roadmap)</a></h1>
+<p>Tiny Agent 坚信“最好的学习方式是亲手构建”。为了避免一上来就面对复杂的完整系统，本项目将 Agent 的核心能力拆解到不同的 Git Tag 中。</p>
+<blockquote>
+<p>注：你可以通过 <code>git checkout</code> 命令切换到任意版本进行独立运行和源码研读。如 <code>git checkout v0.3</code> 将切换到 多轮对话 版本。</p>
+</blockquote>
+<h2 id="第一阶段模型基础与全栈通信"><a class="header" href="#第一阶段模型基础与全栈通信">第一阶段：模型基础与全栈通信</a></h2>
+<h3 id="v01-hello-llm你好大模型"><a class="header" href="#v01-hello-llm你好大模型">[v0.1] Hello LLM（你好，大模型）</a></h3>
+<ul>
+<li><strong>定位</strong>：项目起步，跑通最基础的闭环。</li>
+<li><strong>核心能力</strong>：学习如何配置和初始化大语言模型（LLM）SDK，实现单轮文本输入与输出。</li>
+<li><strong>UI演进</strong>：无前端 UI，纯 CLI 终端交互，方便开发者聚焦后端网络请求本身。</li>
+</ul>
+<h3 id="v02-streaming-webweb-流式输出"><a class="header" href="#v02-streaming-webweb-流式输出">[v0.2] Streaming Web（Web 流式输出）</a></h3>
+<ul>
+<li><strong>定位</strong>：从 CLI 迈向实时响应的浏览器交互。</li>
+<li><strong>核心能力</strong>：搭建最小后端服务与前端页面，通过 SSE 协议实现 LLM 流式输出的实时渲染。</li>
+<li><strong>UI演进</strong>：引入极简 Web页面 （输入框 + 发送按钮 + 结果展示区），动态解析并逐字打印流式文本。</li>
+</ul>
+<h3 id="v03-multi-turn-chat多轮对话"><a class="header" href="#v03-multi-turn-chat多轮对话">[v0.3] Multi-turn Chat（多轮对话）</a></h3>
+<ul>
+<li><strong>定位</strong>：从“一问一答”走向“连续对话”。</li>
+<li><strong>核心能力</strong>：理解 Message Protocol 的设计（System / User / Assistant），设计 Chat History 数据结构，实现多轮连续对话。</li>
+<li><strong>UI演进</strong>：增加消息列表，可保留对话历史，支持连续追问。</li>
+</ul>
+<h3 id="v04-structured-output结构化输出"><a class="header" href="#v04-structured-output结构化输出">[v0.4] Structured Output（结构化输出）</a></h3>
+<ul>
+<li><strong>定位</strong>：从自然语言输出，演进到可被程序可靠消费的结构化输出。</li>
+<li><strong>核心能力</strong>：引入Prompt Template、Structured Outputs、JSON Schema 等现代 LLM 交互方式，以及Temperature参数。</li>
+<li><strong>UI演进</strong>：对话框支持JSON等特殊格式渲染。</li>
+</ul>
+<h2 id="第二阶段外部知识与规划行动"><a class="header" href="#第二阶段外部知识与规划行动">第二阶段：外部知识与规划行动</a></h2>
+<h3 id="v05-basic-rag基础检索增强生成"><a class="header" href="#v05-basic-rag基础检索增强生成">[v0.5] Basic RAG（基础检索增强生成）</a></h3>
+<ul>
+<li><strong>定位</strong>：为模型提供可检索的外部知识库，降低无依据生成的概率。</li>
+<li><strong>核心能力</strong>：对接 Embedding 模型，构建内存简易向量库，实现文档读取、文本切分、向量化与本地检索，打通「切片 → 检索 → Prompt 拼装 → 生成」的最简闭环链路。</li>
+<li><strong>UI演进</strong>：对话框中支持显示文档引用来源。</li>
+</ul>
+<h3 id="v06-tool-calling工具调用"><a class="header" href="#v06-tool-calling工具调用">[v0.6] Tool Calling（工具调用）</a></h3>
+<ul>
+<li><strong>定位</strong>：赋予 Agent 改变世界、连接外部系统的双手。</li>
+<li><strong>核心能力</strong>：深入 Function Calling 原理，学习工具声明、参数生成、本地函数执行以及工具结果回填，理解 LLM 如何调用外部能力；加入最小安全机制。</li>
+<li><strong>UI演进</strong>：在对话流中展示 Tool 的调用信息（参数 → 调用状态 → 返回结果）。</li>
+</ul>
+<h3 id="v07-agent-loop智能体循环"><a class="header" href="#v07-agent-loop智能体循环">[v0.7] Agent Loop（智能体循环）</a></h3>
+<ul>
+<li><strong>定位</strong>：从被动调用工具到自主思考。</li>
+<li><strong>核心能力</strong>：手写 ReAct 范式核心循环（Thought → Action → Observation），让 Agent 能够自主感知复杂任务、调用工具，并加入最大步数限制与 Token 防御机制。</li>
+<li><strong>UI演进</strong>：工具调用模式演变为智能体模式；对话流展示 Agent 的执行步骤，展示每一轮的思考决策、工具调用决策以及返回的观察结果。</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr-ef4e11c1.min.js"></script>
+        <script src="mark-09e88c2c.min.js"></script>
+        <script src="searcher-09f2665d.js"></script>
+
+        <script src="clipboard-1626706a.min.js"></script>
+        <script src="highlight-abc7f01d.js"></script>
+        <script src="book-609e4cb8.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="mermaid-eefea253.min.js"></script>
+        <script src="mermaid-init-ccf746f1.js"></script>
+
+        <script>
+        window.addEventListener('load', function() {
+            window.setTimeout(window.print, 100);
+        });
+        </script>
+
+
+    </div>
+    </body>
+</html>
