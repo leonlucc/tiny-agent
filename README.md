@@ -1,19 +1,36 @@
-# Tiny Agent 极简智能体
+<div align="center">
+<h1>极简智能体 (Tiny Agent)</h1>
 
-> 从一行 LLM 调用开始，构建你的 AI Agent
+<p>从一行 LLM 调用开始，手把手构建你的 AI Agent </p>
+
+<a href="https://github.com/leonlucc/tiny-agent/stargazers"><img src="https://img.shields.io/github/stars/leonlucc/tiny-agent?style=flat-square" alt="Stars"></a>
+<a href="https://github.com/leonlucc/tiny-agent/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-Apache_2.0-blue.svg?style=flat-square" alt="License"></a>
+<a href="https://python.org"><img src="https://img.shields.io/badge/Python-3.12+-green.svg?style=flat-square" alt="Python"></a>
+
+**简体中文** | [English](README_EN.md) 
+<br>
+</div>
+
+![](./doc/header.png)
 
 Tiny Agent 是一个轻量级的 AI 智能体开源项目，也是一本与源码同步演进的渐进式开发教程。项目遵循**由浅入深、循序渐进**的设计理念，不依赖复杂框架，从一次最简单的大模型调用开始，逐步构建出一个具备感知、记忆、规划、行动能力的智能体。适合已掌握 Python 基础、想掌握AI Agent底层原理的开发者。
 
-![](./book/src/images/snapshot-v0.2.gif)
 
 ## 项目特点
 
-* 🚀 极简轻量化实现：剔除冗余封装，代码注释完整，单文件模块易阅读、逐行可拆解学习
-* 🧩 高内聚模块化分层：LLM、向量库、工具调用、记忆模块完全解耦，支持自由替换、二次拓展改造
-* 🔧 单体架构：单进程同时托管前后端，无需前端打包工具，一键启动，降低本地调试成本
-* 🤖 完整覆盖现代Agent核心链路：从基础LLM对话到ReAct、长记忆、多智能体全流程落地
-* 📚 渐进式教学版本：每个Git Tag独立可运行，跟随版本迭代分步实操，边写边理解原理
+* 🚀 **极简轻量化实现**：零重型框架依赖，剔除冗余封装，代码注释完整，单文件模块易阅读、逐行可拆解学习
+* 🧩 **高内聚模块化分层**：LLM、向量库、工具调用、记忆模块完全解耦，支持自由替换、二次拓展改造
+* 🔧 **单体架构**：单进程同时托管前后端，无需前端打包工具，一键启动，降低本地调试成本
+* 🤖 **覆盖现代Agent核心链路**：从基础LLM对话到ReAct、长记忆、多智能体全流程落地
+* 📚 **渐进式教学版本**：每个Git Tag独立可运行，跟随版本迭代分步实操，边写边理解原理
 
+## 适合对象
+
+* **想搞懂底层原理的开发者**：不满足于调用 LangChain 等黑盒框架，想从零手写 ReAct、RAG 和工具调用。
+* **找实战范例的 Python 学习者**：懂 Python 基础，想通过一个无冗余代码、逐行可调试的项目学习 Agent。
+* **想极速验证想法的工程师**：不需要复杂的 Vue/React 前端环境，单进程一键启动极简 Web 界面。
+
+> ⚠️ **注意**：本项目侧重**教学与源码理解**。如需开箱即用的企业级生产框架，建议选择 LangChain 等其他框架。
 ---
 
 ## 技术栈
@@ -52,6 +69,7 @@ python -m app.main
 ```
 
 启动后打开 `http://127.0.0.1:8000`，即可在浏览器中输入消息并查看 SSE 流式输出。
+![](./book/src/images/snapshot-v0.3.gif)
 
 👉 请移步查阅：🔗 [完整快速开始指南](doc/quick-start.md)
 
